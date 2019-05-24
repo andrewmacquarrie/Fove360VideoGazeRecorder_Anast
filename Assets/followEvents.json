@@ -1,12 +1,1 @@
-{"events": [{"startTime": 1,"hAngle":123,"vAngle":90, "type": "ARROW_FOLLOW"},
-    {"startTime": 3,"hAngle":123,"vAngle":90, "type": "CLEAR"},
-    {"startTime": 5,"hAngle":0,"vAngle":90, "type": "ARROW_FOLLOW"},
-    {"startTime": 6,"hAngle":45,"vAngle":90, "type": "ARROW_FOLLOW"},
-    {"startTime": 7,"hAngle":90,"vAngle":90, "type": "ARROW_FOLLOW"},
-    {"startTime": 8,"hAngle":135,"vAngle":90, "type": "ARROW_FOLLOW"},
-    {"startTime": 9,"hAngle":180,"vAngle":90, "type": "ARROW_FOLLOW"},
-    {"startTime": 10,"hAngle":0,"vAngle":90, "type": "ARROW_FOLLOW"},
-    {"startTime": 11,"hAngle":-45,"vAngle":90, "type": "ARROW_FOLLOW"},
-    {"startTime": 12,"hAngle":-90,"vAngle":90, "type": "ARROW_FOLLOW"},
-    {"startTime": 13,"hAngle":-135,"vAngle":90, "type": "ARROW_FOLLOW"},
-    {"startTime": 14,"hAngle":-180,"vAngle":90, "type": "ARROW_FOLLOW"}]}
+{"events": [{"startTime": 0.3,"hAngle":0,"vAngle":-20, "type": "ARROW_FOLLOW"}]}
