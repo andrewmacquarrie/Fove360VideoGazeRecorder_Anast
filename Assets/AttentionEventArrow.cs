@@ -47,22 +47,25 @@ public class AttentionEventArrow : MonoBehaviour {
 			SetHorizontalAngle(horAngleBetweenArrowAndEyes);
 			SetVerticalAngle();
 
-			var rotH = Quaternion.AngleAxis(hAngle,Vector3.up);
-			var vectorToAttentionPoint = rotH * Vector3.forward;
-			var horAngleBeteenEyesAndTargetPoint = Vector2.SignedAngle (new Vector2 (vectorToAttentionPoint.x,vectorToAttentionPoint.z), new Vector2 (vectorToEyePosition.x,vectorToEyePosition.z));
-
-			if (horAngleBeteenEyesAndTargetPoint > 0) {
-				arrow.transform.localRotation = Quaternion.Euler(new Vector3 (90, 0, -90));
-			} else {
-				arrow.transform.localRotation = Quaternion.Euler(new Vector3 (-90, 0, -90));
-			}
+			RotateArrowToFaceTarget();
 		}
 
-		RotateArrowToFaceTarget();
 	}
 
 	private void RotateArrowToFaceTarget(){
-		
+		var vectorToEyePosition = eyeLocation.transform.position;
+
+		var rotH = Quaternion.AngleAxis(hAngle,Vector3.up);
+		var vectorToAttentionPoint = rotH * Vector3.forward;
+		var horAngleBeteenEyesAndTargetPoint = Vector2.SignedAngle (new Vector2 (vectorToAttentionPoint.x,vectorToAttentionPoint.z), new Vector2 (vectorToEyePosition.x,vectorToEyePosition.z));
+
+		if (horAngleBeteenEyesAndTargetPoint > 0) {
+			arrow.transform.localRotation = Quaternion.Euler(new Vector3 (90, 0, -90));
+		} else {
+			arrow.transform.localRotation = Quaternion.Euler(new Vector3 (-90, 0, -90));
+		}
+
+		arrow.transform.Rotate(1f, 0f, 0f, Space.Self);
 	}
 
 	private bool ShouldStopFollowing(){
