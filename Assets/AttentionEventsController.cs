@@ -6,7 +6,7 @@ using System.IO;
 public class AttentionEventsController : MonoBehaviour {
 
 	public AttentionEventArrow arrow;
-	public FlickerDotController flickerController;
+	public AttentionEventArrow flickerController;
 
 	public string PathToEventsFile;
 	private List<AttentionEvent> events;
@@ -65,10 +65,10 @@ public class AttentionEventsController : MonoBehaviour {
 			}  else if (currentEvent.type == "ARROW_FOLLOW") {
 				arrow.FollowTo (currentEvent.hAngle, currentEvent.vAngle);
 			} else if (currentEvent.type == "FLICKER") {
-				flickerController.PointTowards (currentEvent.hAngle);
+				flickerController.PointTowards (currentEvent.hAngle, currentEvent.vAngle);
 			} else if (currentEvent.type == "CLEAR") {
 				arrow.Clear ();
-				flickerController.StopFlicker();
+				flickerController.Clear();
 			}
 
 			currentEventIndex++;

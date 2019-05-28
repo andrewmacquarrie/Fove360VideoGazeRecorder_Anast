@@ -1,12 +1,1 @@
-{"events": [{"startTime": 1,"hAngle":123,"vAngle":0, "type": "FLICKER"},
-    {"startTime": 3,"hAngle":0,"vAngle":0, "type": "CLEAR"},
-    {"startTime": 5,"hAngle":0,"vAngle":0, "type": "FLICKER"},
-    {"startTime": 6,"hAngle":45,"vAngle":0, "type": "FLICKER"},
-    {"startTime": 7,"hAngle":90,"vAngle":0, "type": "FLICKER"},
-    {"startTime": 8,"hAngle":135,"vAngle":0, "type": "FLICKER"},
-    {"startTime": 9,"hAngle":180,"vAngle":0, "type": "FLICKER"},
-    {"startTime": 10,"hAngle":0,"vAngle":0, "type": "FLICKER"},
-    {"startTime": 11,"hAngle":-45,"vAngle":0, "type": "FLICKER"},
-    {"startTime": 12,"hAngle":-90,"vAngle":0, "type": "FLICKER"},
-    {"startTime": 13,"hAngle":-135,"vAngle":0, "type": "FLICKER"},
-    {"startTime": 14,"hAngle":-180,"vAngle":0, "type": "FLICKER"}]}
+{"events": [{"startTime": 0.3,"hAngle":0,"vAngle":-10, "type": "FLICKER"}]}

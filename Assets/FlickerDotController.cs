@@ -8,12 +8,16 @@ public class FlickerDotController : MonoBehaviour {
 
 	public GameObject eyeLocation;
 
+	private RotateToFaceTarget rotateToFaceTarget;
+
 	bool showFlicker = false;
 	private float hAngle;
+	private float vAngle;
 
 	// Use this for initialization
 	void Start () {
 		StopFlicker ();
+		rotateToFaceTarget = GetComponent<RotateToFaceTarget>();
 	}
 	
 	// Update is called once per frame
@@ -25,9 +29,11 @@ public class FlickerDotController : MonoBehaviour {
 		}
 	}
 
-	public void PointTowards(float hAng) {
+	public void PointTowards(float hAng, float vAng) {
 		showFlicker = true;
 		hAngle = hAng;
+		vAngle = vAng;
+		rotateToFaceTarget.SetTarget(hAngle,vAngle);
 	}
 
 	public void StopFlicker() {
