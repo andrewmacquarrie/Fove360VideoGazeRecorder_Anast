@@ -42,7 +42,7 @@ public class RotateToFaceTarget : MonoBehaviour {
 			} 
 		} else {
 			// target is on this side of the sphere - make the arrow point to the correct bearing
-			var longLatsForEyePosition = GetLatLongForEyePosition(horAngleBeteenEyesAndTargetPoint, vectorToEyePosition);
+			var longLatsForEyePosition = GetLatLongForEyePosition(vectorToEyePosition);
 			//Debug.LogError(longLatsForEyePosition);
 			var longLatsForAttentionPosition = new Vector2(hAngle, vAngle);
 			var bearingToTarget = GetBearingForLongLats(horAngleBeteenEyesAndTargetPoint, longLatsForEyePosition, longLatsForAttentionPosition);
@@ -63,7 +63,7 @@ public class RotateToFaceTarget : MonoBehaviour {
 		return brng * Mathf.Rad2Deg;
 	}
 
-	private Vector2 GetLatLongForEyePosition(float horAngleBeteenEyesAndTargetPoint, Vector3 vectorToEyePosition)
+	private Vector2 GetLatLongForEyePosition(Vector3 vectorToEyePosition)
 	{
 		var latLongDeg = ToLatLongRad(vectorToEyePosition) * Mathf.Rad2Deg;
 

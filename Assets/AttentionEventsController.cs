@@ -8,6 +8,8 @@ public class AttentionEventsController : MonoBehaviour {
 	public AttentionEventArrow arrow;
 	public AttentionEventArrow flickerController;
 
+	public ApplyLongLat target;
+
 	public string PathToEventsFile;
 	private List<AttentionEvent> events;
 	int currentEventIndex;
@@ -59,6 +61,8 @@ public class AttentionEventsController : MonoBehaviour {
 		if (Time.time > currentEvent.startTime) {
 			// do event thing
 			Debug.Log("doing event: " + currentEvent.type);
+
+			target.ApplyLongLatToPosition(currentEvent.hAngle, currentEvent.vAngle);
 
 			if (currentEvent.type == "ARROW") {
 				arrow.PointTowards (currentEvent.hAngle, currentEvent.vAngle);
