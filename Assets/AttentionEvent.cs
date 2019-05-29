@@ -10,12 +10,12 @@ public class AttentionEvent
     public float width;
     public float height;
     public string type;
-    public float targetHorPixels;
+    public float targetHorPixel;
     public float targetVerPixel;
 
     public float hAngle {
         get {
-            return AngleHelperMethods.PixelCoordToLong(targetHorPixels);
+            return AngleHelperMethods.PixelCoordToLong(targetHorPixel);
         }
     }
     public float vAngle {

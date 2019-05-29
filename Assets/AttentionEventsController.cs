@@ -39,6 +39,11 @@ public class AttentionEventsController : MonoBehaviour {
 		}
 
 		currentEventIndex = 0;
+
+		//Debug.LogError(AngleHelperMethods.GetClosestPointOnTarget(new AttentionEvent() { targetHorPixel = 2000, targetVerPixel = 960, height = 10, width = 10 }, new Vector2(1920,500)));
+
+
+
 	}
 	
 	// Update is called once per frame
