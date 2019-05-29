@@ -15,15 +15,6 @@ public class AttentionEventsController : MonoBehaviour {
 	int currentEventIndex;
 
 	[System.Serializable]
-	public class AttentionEvent
-	{
-		public float startTime;
-		public float hAngle;
-		public float vAngle;
-		public string type;
-	}
-
-	[System.Serializable]
 	public class AllAttentionEventData
 	{
 		public List<AttentionEvent> events = new List<AttentionEvent>();
@@ -65,11 +56,11 @@ public class AttentionEventsController : MonoBehaviour {
 			target.ApplyLongLatToPosition(currentEvent.hAngle, currentEvent.vAngle);
 
 			if (currentEvent.type == "ARROW") {
-				arrow.PointTowards (currentEvent.hAngle, currentEvent.vAngle);
+				arrow.PointTowards (currentEvent);
 			}  else if (currentEvent.type == "ARROW_FOLLOW") {
-				arrow.FollowTo (currentEvent.hAngle, currentEvent.vAngle);
+				arrow.FollowTo (currentEvent);
 			} else if (currentEvent.type == "FLICKER") {
-				flickerController.PointTowards (currentEvent.hAngle, currentEvent.vAngle);
+				flickerController.PointTowards (currentEvent);
 			} else if (currentEvent.type == "CLEAR") {
 				arrow.Clear ();
 				flickerController.Clear();

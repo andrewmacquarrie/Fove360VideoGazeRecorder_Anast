@@ -13,6 +13,7 @@ public class FlickerDotController : MonoBehaviour {
 	bool showFlicker = false;
 	private float hAngle;
 	private float vAngle;
+	private Vector2 targetSize;
 
 	// Use this for initialization
 	void Start () {
@@ -29,10 +30,11 @@ public class FlickerDotController : MonoBehaviour {
 		}
 	}
 
-	public void PointTowards(float hAng, float vAng) {
+	public void PointTowards(AttentionEvent e) {
 		showFlicker = true;
-		hAngle = hAng;
-		vAngle = vAng;
+		hAngle = e.hAngle;
+		vAngle = e.vAngle;
+		targetSize = new Vector2(e.width, e.height);
 		rotateToFaceTarget.SetTarget(hAngle,vAngle);
 	}
 

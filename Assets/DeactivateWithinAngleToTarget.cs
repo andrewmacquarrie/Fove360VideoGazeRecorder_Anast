@@ -9,6 +9,8 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 	public GameObject eyeLocation;
 	public GameObject target;
 
+	private Vector2 targetSize;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -23,6 +25,9 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 		} else {
 			objectToDeactivate.SetActive(true);
 		}
-		
+	}
+
+	public void UpdateTargetSize(AttentionEvent e){
+		targetSize = new Vector2(e.width, e.height);
 	}
 }

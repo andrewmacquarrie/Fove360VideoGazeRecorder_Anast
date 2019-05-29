@@ -8,6 +8,7 @@ public class AttentionEventArrow : MonoBehaviour {
 	private bool hidden;
 	private float hAngle;
 	private float vAngle;
+	private Vector2 targetSize;
 	private bool following;
 	private bool stoppedFollowing; // this is a flag to say if we got close enough to the eyes to stop following. Following is activated again when a larger delta is reached
 	public float followSpeed = 1f;
@@ -94,19 +95,21 @@ public class AttentionEventArrow : MonoBehaviour {
 
 	}
 
-	public void PointTowards(float hAng, float vAng) {
+	public void PointTowards(AttentionEvent e) {
 		hidden = false;
 		following = false;
-		hAngle = hAng;
-		vAngle = vAng;
+		hAngle = e.hAngle;
+		vAngle = e.vAngle;
+		targetSize = new Vector2(e.width, e.height);
 		rotateToFaceTarget.SetTarget(hAngle,vAngle);
 	}
 
-	public void FollowTo(float hAng, float vAng) {
+	public void FollowTo(AttentionEvent e) {
 		hidden = false;
 		following = true;
-		hAngle = hAng;
-		vAngle = vAng;
+		hAngle = e.hAngle;
+		vAngle = e.vAngle;
+		targetSize = new Vector2(e.width, e.height);
 		rotateToFaceTarget.SetTarget(hAngle,vAngle);
 	}
 
