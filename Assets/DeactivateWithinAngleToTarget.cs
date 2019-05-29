@@ -10,6 +10,7 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 	public GameObject target;
 
 	private Vector2 targetSize;
+	private AttentionEvent e;
 
 	// Use this for initialization
 	void Start () {
@@ -18,16 +19,42 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		var vectorToEyePosition = eyeLocation.transform.position;
+		if(e == null){
+			// no targets happened yet
+			return;
+		}
+		
+		// get the pixel coords for the target and eye positions
+		var targetPixelCoords = AngleHelperMethods.PositionToPixelCoords(target.transform.position);
+		var eyePixelCoords = AngleHelperMethods.PositionToPixelCoords(eyeLocation.transform.position);
+
+		// calculate the pixel coord for the closest point in the target to the eye position
+		var closestPointOnTarget = AngleHelperMethods.GetClosestPointOnTarget(e, eyePixelCoords);
+
+		// calculate the long/lat for that pixel coord
+		var closestPointOnTargetLonLat = new Vector2(AngleHelperMethods.PixelCoordToLong(closestPointOnTarget.x), AngleHelperMethods.PixelCoordToLat(closestPointOnTarget.y));
+
+		// get long/lat as rays?
+		var vectorToClosestPointOnTarget = AngleHelperMethods.LonLatToPosition(closestPointOnTargetLonLat.x, closestPointOnTargetLonLat.y);
+
+		// show this on the screen as a ray
+		//Debug.DrawRay(new Vector3(0,0,0), vectorToClosestPointOnTarget, Color.green, 1f);
+
+		// claculate 3d angle between these, and add deactivationAngle to that - if less than this, deactivate object
 		var vectorToTarget = target.transform.position;
-		if(Vector3.Angle(vectorToEyePosition, vectorToTarget) < deactivationAngle){
+		var angleTargetCentreToClosestTargetPoint = Vector3.Angle(vectorToTarget, vectorToClosestPointOnTarget);
+		var totalAllowableAngle = angleTargetCentreToClosestTargetPoint + deactivationAngle;
+
+		var vectorToEyePosition = eyeLocation.transform.position;
+		if(Vector3.Angle(vectorToEyePosition, vectorToTarget) < totalAllowableAngle){
 			objectToDeactivate.SetActive(false);
 		} else {
 			objectToDeactivate.SetActive(true);
 		}
 	}
 
-	public void UpdateTargetSize(AttentionEvent e){
-		targetSize = new Vector2(e.width, e.height);
+	public void UpdateTargetSize(AttentionEvent ev){
+		targetSize = new Vector2(ev.width, ev.height);
+		e = ev;
 	}
 }

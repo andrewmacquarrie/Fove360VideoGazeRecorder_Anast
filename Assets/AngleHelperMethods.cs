@@ -28,8 +28,16 @@ public static class AngleHelperMethods  {
     public static float LatToPixelCoordY(float lat){
         var percentageDown = lat / 90f;
         var pixelY = (percentageDown * (verticalResolution/2f)) + (verticalResolution / 2f); // as 0 deg long is centered at pixel coords (horizontalResolution/2f)
+        // then need to flip because top is 0 and bottom is verticalResolution, whereas above will result in higher degrees being higher pixel coords
+        pixelY = verticalResolution - pixelY;
         // shouldny need this - what is 190 degrees vertically - doesnt totally exist I think... pixelY = Mathf.Repeat(pixelY, verticalResolution) + 1f; // make sure is in 360 range, ie from 1 to horizontalResolution
         return pixelY;
+    }
+
+    public static Vector2 PositionToPixelCoords(Vector3 position){
+        var longLat = PositionToLonLat(position);
+        var pixelCoords = new Vector2(LongToPixelCoordX(longLat.x), LatToPixelCoordY(longLat.y));
+        return pixelCoords;
     }
 
     public static Vector2 PositionToLonLat(Vector3 position)
@@ -52,37 +60,50 @@ public static class AngleHelperMethods  {
         return new Vector2(lon, lat);
     }
 
+    public static Vector3 LonLatToPosition(float lon, float lat)
+    {
+        // UNTESTED: from here: https://answers.unity.com/questions/189724/polar-spherical-coordinates-to-xyz-and-vice-versa.html
+    
+        var radius = 3f;
+
+        float ltR = lat * Mathf.Deg2Rad; 
+        float lnR = lon * Mathf.Deg2Rad; 
+
+        float xPos = (radius ) * Mathf.Cos(ltR) * Mathf.Cos(lnR);
+        float zPos = (radius ) * Mathf.Cos(ltR) * Mathf.Sin(lnR);
+        float yPos = (radius ) * Mathf.Sin(ltR);
+        
+        Vector3 result = new Vector3(xPos * -1f, yPos, zPos);
+
+        return result;
+
+        // origin was this:  return Quaternion.AngleAxis(longitude, -Vector3.up) * Quaternion.AngleAxis(latitude, -Vector3.right) * new Vector3(0,0,4);
+    }
+
     public static Vector2 GetClosestPointOnTarget(AttentionEvent e, Vector2 eyePositionInPixels){
         // rotate the target rectangle until it's centered horizontally in the equirectangular
         var xDiff = (horizontalResolution / 2f) - e.targetHorPixel;
         
-        Debug.LogError("xdiff = " + xDiff);
-
-        var targetX = e.targetHorPixel + xDiff;
+        var targetX = horizontalResolution / 2f; // we're moving the target xDiff so it's in the middle //e.targetHorPixel + xDiff;
         var targetY = e.targetVerPixel;
 
         // rotate the eye points Ex and Ey by the same amount
         var eyeX = eyePositionInPixels.x + xDiff;
         if(eyeX > horizontalResolution) {
             eyeX = eyeX - horizontalResolution; // wrap around;
+        } else if(eyeX < 0f) {
+            eyeX = eyeX + horizontalResolution; 
         }
         var eyeY = eyePositionInPixels.y;
 
-        Debug.LogError("eyeX = " + eyeX);
-        Debug.LogError("eyeY = " + eyeY);
-
         // Calculate the closest point on the target to the eye point
-        var largestBoxX = e.targetHorPixel + (e.width / 2f);
-        var smallestBoxX = e.targetHorPixel - (e.width / 2f);
+        var largestBoxX = targetX + (e.width / 2f);
+        var smallestBoxX = targetX - (e.width / 2f);
         var closestPointOnTargetX = Mathf.Min(largestBoxX, Mathf.Max(smallestBoxX, eyeX));
 
-        var largestBoxY = e.targetVerPixel + (e.height / 2f);
-        var smallestBoxY = e.targetVerPixel - (e.height / 2f);
+        var largestBoxY = targetY + (e.height / 2f);
+        var smallestBoxY = targetY - (e.height / 2f);
         var closestPointOnTargetY = Mathf.Min(largestBoxY, Mathf.Max(smallestBoxY, eyeY));
-
-
-        Debug.LogError("closestPointOnTargetX = " + closestPointOnTargetX);
-        Debug.LogError("closestPointOnTargetY = " + closestPointOnTargetY);
 
         // De-rotate this point back into the original frame of reference and return
         var closestPointOnTargetXRotated = closestPointOnTargetX - xDiff;
@@ -91,6 +112,7 @@ public static class AngleHelperMethods  {
         } else if (closestPointOnTargetXRotated > horizontalResolution) {
             closestPointOnTargetXRotated = closestPointOnTargetXRotated - horizontalResolution;
         }
+
         return new Vector2(closestPointOnTargetXRotated, closestPointOnTargetY);
     }
 }

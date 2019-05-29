@@ -24,6 +24,8 @@ public class AttentionEventArrow : MonoBehaviour {
 
 	private RotateToFaceTarget rotateToFaceTarget;
 
+	public DeactivateWithinAngleToTarget deactivator;
+
 	// Use this for initialization
 	void Start () {
 		hidden = true;
@@ -102,6 +104,8 @@ public class AttentionEventArrow : MonoBehaviour {
 		vAngle = e.vAngle;
 		targetSize = new Vector2(e.width, e.height);
 		rotateToFaceTarget.SetTarget(hAngle,vAngle);
+		deactivator.UpdateTargetSize(e);
+		
 	}
 
 	public void FollowTo(AttentionEvent e) {
@@ -111,6 +115,7 @@ public class AttentionEventArrow : MonoBehaviour {
 		vAngle = e.vAngle;
 		targetSize = new Vector2(e.width, e.height);
 		rotateToFaceTarget.SetTarget(hAngle,vAngle);
+		deactivator.UpdateTargetSize(e);
 	}
 
 	public void Clear(){

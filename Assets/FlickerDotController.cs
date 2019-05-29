@@ -10,6 +10,8 @@ public class FlickerDotController : MonoBehaviour {
 
 	private RotateToFaceTarget rotateToFaceTarget;
 
+	public DeactivateWithinAngleToTarget deactivator;
+
 	bool showFlicker = false;
 	private float hAngle;
 	private float vAngle;
@@ -36,6 +38,7 @@ public class FlickerDotController : MonoBehaviour {
 		vAngle = e.vAngle;
 		targetSize = new Vector2(e.width, e.height);
 		rotateToFaceTarget.SetTarget(hAngle,vAngle);
+		deactivator.UpdateTargetSize(e);
 	}
 
 	public void StopFlicker() {

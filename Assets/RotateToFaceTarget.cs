@@ -42,7 +42,7 @@ public class RotateToFaceTarget : MonoBehaviour {
 			} 
 		} else {
 			// target is on this side of the sphere - make the arrow point to the correct bearing
-			var longLatsForEyePosition = GetLatLongForEyePosition(vectorToEyePosition);
+			var longLatsForEyePosition = AngleHelperMethods.PositionToLonLat(vectorToEyePosition); //   GetLatLongForEyePosition(vectorToEyePosition);
 			//Debug.LogError(longLatsForEyePosition);
 			var longLatsForAttentionPosition = new Vector2(hAngle, vAngle);
 			var bearingToTarget = GetBearingForLongLats(horAngleBeteenEyesAndTargetPoint, longLatsForEyePosition, longLatsForAttentionPosition);

@@ -15,6 +15,6 @@ public class ApplyLongLat : MonoBehaviour {
 	}
 
 	public void ApplyLongLatToPosition(float longitude, float latitude){
-		transform.position = Quaternion.AngleAxis(longitude, -Vector3.up) * Quaternion.AngleAxis(latitude, -Vector3.right) * new Vector3(0,0,4);
+		transform.position = AngleHelperMethods.LonLatToPosition(longitude, latitude);
 	}
 }

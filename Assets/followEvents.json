@@ -1,1 +1,1 @@
-{"events": [{"startTime": 0.3,"targetHorPixel":2000,"targetVerPixel":1000, "type": "ARROW_FOLLOW"}]}
+{"events": [{"startTime": 0.3,"targetHorPixel":10,"targetVerPixel":500, "height": 200, "width": 300, "type": "ARROW_FOLLOW"}]}
