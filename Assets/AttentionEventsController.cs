@@ -8,11 +8,15 @@ public class AttentionEventsController : MonoBehaviour {
 	public AttentionEventArrow arrow;
 	public AttentionEventArrow flickerController;
 
+	public GameObject dataRecorder;
+
 	public ApplyLongLat target;
 
 	public string PathToEventsFile;
 	private List<AttentionEvent> events;
 	int currentEventIndex;
+
+	private string currentCueTypeUntilCleared = "";
 
 	[System.Serializable]
 	public class AllAttentionEventData
@@ -41,9 +45,6 @@ public class AttentionEventsController : MonoBehaviour {
 		currentEventIndex = 0;
 
 		//Debug.LogError(AngleHelperMethods.GetClosestPointOnTarget(new AttentionEvent() { targetHorPixel = 2000, targetVerPixel = 960, height = 10, width = 10 }, new Vector2(1920,500)));
-
-
-
 	}
 	
 	// Update is called once per frame
@@ -55,22 +56,31 @@ public class AttentionEventsController : MonoBehaviour {
 		var currentEvent = events [currentEventIndex];
 
 		if (Time.time > currentEvent.startTime) {
-			// do event thing
-			Debug.Log("doing event: " + currentEvent.type);
-
-			target.ApplyLongLatToPosition(currentEvent.hAngle, currentEvent.vAngle);
-
-			if (currentEvent.type == "ARROW") {
-				arrow.PointTowards (currentEvent);
-			}  else if (currentEvent.type == "ARROW_FOLLOW") {
-				arrow.FollowTo (currentEvent);
-			} else if (currentEvent.type == "FLICKER") {
-				flickerController.PointTowards (currentEvent);
-			} else if (currentEvent.type == "CLEAR") {
+			if (currentEvent.type == "CLEAR") { // first, see if the event type from the file is telling us to stop the cue!
 				arrow.Clear ();
 				flickerController.Clear();
-			}
+				currentCueTypeUntilCleared = "";
+			} 
+			else { // otherwise, use the randomly generated event type
+				if(currentCueTypeUntilCleared == "") {
+					if(Random.value > 0.5f) {
+						currentCueTypeUntilCleared = "ARROW_FOLLOW";
+					} else {
+						currentCueTypeUntilCleared = "FLICKER";
+					}
+					if(dataRecorder.activeSelf) {
+						DataRecorder dr = dataRecorder.GetComponent<DataRecorder>();
+						dr.RecordCueType(currentCueTypeUntilCleared);
+					}
+				}
 
+				target.ApplyLongLatToPosition(currentEvent.hAngle, currentEvent.vAngle);
+				if (currentCueTypeUntilCleared == "ARROW_FOLLOW") { 
+					arrow.FollowTo (currentEvent);
+				} else if (currentCueTypeUntilCleared == "FLICKER") {
+					flickerController.PointTowards (currentEvent);
+				}
+			}	
 			currentEventIndex++;
 		}
 	}

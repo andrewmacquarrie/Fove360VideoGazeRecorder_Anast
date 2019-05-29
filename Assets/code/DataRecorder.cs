@@ -13,10 +13,13 @@ public class DataRecorder : MonoBehaviour {
     public int participantId;
 
 	private string orientationDataFilePath;
+	private string cueTypeDataFilePath;
 
     public GameObject fove;
     public GameObject videoSphere;
     private FoveInterface foveInterface;
+
+    public bool recordingTrackingData;
 
     private float nextRecord = 0.0F; 
 	private string delimiter = ",";
@@ -25,25 +28,33 @@ public class DataRecorder : MonoBehaviour {
     //private float recordRate = 0.1f; // 10 frames per second  
 
     private TextWriter orientationStringWriter;
+    private TextWriter cueTypeStringWriter;
 
     // Use this for initialization
     void Start ()
-    {
+    {   
         Scene scene = SceneManager.GetActiveScene();
-        orientationDataFilePath = "./DataRecordings/" + participantId + "_" + scene.name + DateTime.Now.ToString("MM-dd-yy_hh-mm-ss") + ".csv";
+        orientationDataFilePath = "./DataRecordings/" + participantId + "_" + scene.name + DateTime.Now.ToString("MM-dd-yy_hh-mm-ss") + "_tracking.csv";
+        cueTypeDataFilePath = "./DataRecordings/" + participantId + "_" + scene.name + DateTime.Now.ToString("MM-dd-yy_hh-mm-ss") + "_cues.csv";
         
         orientationStringWriter = new StreamWriter(orientationDataFilePath);
-        string[] headers = new string[] { "video_time", "x_rot", "y_rot", "z_rot", "quat_x", "quat_y", "quat_z", "quat_w",
+        string[] trackingHeaders = new string[] { "video_time", "x_rot", "y_rot", "z_rot", "quat_x", "quat_y", "quat_z", "quat_w",
             "left_eye_vector_x", "left_eye_vector_y", "left_eye_vector_z", "right_eye_vector_x", "right_eye_vector_y", "right_eye_vector_z",
             "left_eye_texture_x", "left_eye_texture_y", "right_eye_texture_x", "right_eye_texture_y" };
-        orientationStringWriter.Write(string.Join(delimiter, headers) + "\n");
+        orientationStringWriter.Write(string.Join(delimiter, trackingHeaders) + "\n");
+
+        cueTypeStringWriter = new StreamWriter(cueTypeDataFilePath);
+        string[] cueTypeHeaders = new string[] { "video_time", "cue_ype" };
+        cueTypeStringWriter.Write(string.Join(delimiter, cueTypeHeaders) + "\n");
 
         foveInterface = fove.GetComponent<FoveInterface>();
     }
 
 	void Update() {
-        var vp = videoSphere.GetComponent<VideoPlayer>();
+        if(!recordingTrackingData)
+            return;
 
+        var vp = videoSphere.GetComponent<VideoPlayer>();
 
         if (vp.isPlaying) {
 			nextRecord = Time.time + recordRate;
@@ -76,6 +87,14 @@ public class DataRecorder : MonoBehaviour {
         }
     }
 
+    public void RecordCueType(string cueType) {
+        var vp = videoSphere.GetComponent<VideoPlayer>();
+        if (vp.isPlaying) {
+            string[] data = new string[]{ vp.time.ToString(), cueType};
+            cueTypeStringWriter.Write(string.Join(delimiter, data) + "\n");
+        }
+    }
+
     private Vector2 GetPixelTextureCoords(Ray r)
     {
         RaycastHit hit;
@@ -105,5 +124,6 @@ public class DataRecorder : MonoBehaviour {
     {
         Debug.Log("Application ending after " + Time.time + " seconds. Closing file writer from Data Recorder");
         orientationStringWriter.Close();
+        cueTypeStringWriter.Close();
     }
 }

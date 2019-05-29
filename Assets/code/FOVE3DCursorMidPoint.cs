@@ -28,7 +28,7 @@ public class FOVE3DCursorMidPoint : MonoBehaviour {
                 transform.position = hit.point;
             }   
         } catch (Exception e) {
-            Debug.Log("Failed to get eye rays - probably FOVE not attached");
+            // Debug.LogError("Failed to get eye rays - probably FOVE not attached");
         }
 	}
 }
