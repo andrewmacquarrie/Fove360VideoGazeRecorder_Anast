@@ -30,7 +30,7 @@ public class RotateToFaceTarget : MonoBehaviour {
 		var horAngleBetweenArrowAndEyes = Vector2.SignedAngle (new Vector2 (transform.position.x,transform.position.z), new Vector2 (vectorToEyePosition.x,vectorToEyePosition.z));
 		
 		var rotH = Quaternion.AngleAxis(hAngle,Vector3.up);
-		var vectorToAttentionPoint = rotH * Vector3.forward;
+		var vectorToAttentionPoint = rotH * new Vector3(-1,0,0); // Vector3.forward;
 		var horAngleBeteenEyesAndTargetPoint = Vector2.SignedAngle (new Vector2 (vectorToAttentionPoint.x,vectorToAttentionPoint.z), new Vector2 (vectorToEyePosition.x,vectorToEyePosition.z));
 
 		if(horAngleBeteenEyesAndTargetPoint > 90 || horAngleBeteenEyesAndTargetPoint < -90) {
