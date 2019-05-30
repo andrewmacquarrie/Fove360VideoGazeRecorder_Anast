@@ -26,9 +26,6 @@ public class RotateToFaceTarget : MonoBehaviour {
 
 	private void RotateToTarget(){
 		var vectorToEyePosition = eyeLocation.transform.position;
-
-		var horAngleBetweenArrowAndEyes = Vector2.SignedAngle (new Vector2 (transform.position.x,transform.position.z), new Vector2 (vectorToEyePosition.x,vectorToEyePosition.z));
-		
 		var rotH = Quaternion.AngleAxis(hAngle,Vector3.up);
 		var vectorToAttentionPoint = rotH * new Vector3(-1,0,0); // Vector3.forward;
 		var horAngleBeteenEyesAndTargetPoint = Vector2.SignedAngle (new Vector2 (vectorToAttentionPoint.x,vectorToAttentionPoint.z), new Vector2 (vectorToEyePosition.x,vectorToEyePosition.z));
@@ -61,48 +58,5 @@ public class RotateToFaceTarget : MonoBehaviour {
 		var brng = Mathf.Atan2(y, x);
 
 		return brng * Mathf.Rad2Deg;
-	}
-
-	private Vector2 GetLatLongForEyePosition(Vector3 vectorToEyePosition)
-	{
-		var latLongDeg = ToLatLongRad(vectorToEyePosition) * Mathf.Rad2Deg;
-
-		if( float.IsNaN(latLongDeg.x) ){
-			latLongDeg.x = 0f;
-		}
-		if( float.IsNaN(latLongDeg.y) ){
-			latLongDeg.y = 0f;
-		}
-
-		return latLongDeg;
-	}
-
-	public Vector2 ToLatLongRad(Vector3 position)
-	{
-		position.Normalize();
-
-		var lng = -( Mathf.Atan2( -position.z, -position.x ) ) - Mathf.PI / 2f;
-
-		//to bind between -PI / PI
-		if( lng < - Mathf.PI ){
-			lng += Mathf.PI * 2;
-		}
-
-		//latitude : angle between the vector & the vector projected on the XZ plane on a unit sphere
-
-		//project on the XZ plane
-		var p = new Vector3( position.x, 0f, position.z );
-		//project on the unit sphere
-		p.Normalize();
-
-		//commpute the angle ( both vectors are normalized, no division by the sum of lengths )
-		var lat = Mathf.Acos( Vector3.Dot(p, position) );
-
-		//invert if Y is negative to ensure teh latitude is comprised between -PI/2 & PI / 2
-		if( position.y < 0 ){
-			lat *= -1;
-		}
-
-		return new Vector2(lng,lat);
 	}
 }
