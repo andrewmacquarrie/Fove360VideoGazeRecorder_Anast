@@ -8,7 +8,7 @@ public class FlickerDotController : MonoBehaviour {
 
 	public GameObject eyeLocation;
 
-	private RotateToFaceTarget rotateToFaceTarget;
+	//private RotateToFaceTarget rotateToFaceTarget;
 
 	public DeactivateWithinAngleToTarget deactivator;
 
@@ -19,8 +19,8 @@ public class FlickerDotController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		StopFlicker ();
-		rotateToFaceTarget = GetComponent<RotateToFaceTarget>();
+		Clear ();
+		//rotateToFaceTarget = GetComponent<RotateToFaceTarget>();
 	}
 	
 	// Update is called once per frame
@@ -37,11 +37,11 @@ public class FlickerDotController : MonoBehaviour {
 		hAngle = e.hAngle;
 		vAngle = e.vAngle;
 		targetSize = new Vector2(e.width, e.height);
-		rotateToFaceTarget.SetTarget(hAngle,vAngle);
+		//rotateToFaceTarget.SetTarget(hAngle,vAngle);
 		deactivator.UpdateTargetSize(e);
 	}
 
-	public void StopFlicker() {
+	public void Clear() {
 		showFlicker = false;
 		modulatingDot.SetActive (false);
 	}

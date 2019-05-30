@@ -51,7 +51,14 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 
 	// From https://github.com/Mouledoux/ConnectedHome/blob/master/Assets/Scripts/TargetIndicator.cs
 	private void UpdatePositionWithinFov()
-    {
+    {		
+		var vectorToAttentionPoint = target.transform.position;
+		var vectorToHeadPosition = camera.transform.forward;
+		var horAngleBeteenHeadAndTargetPoint = Vector2.SignedAngle (new Vector2 (vectorToAttentionPoint.x,vectorToAttentionPoint.z), new Vector2 (vectorToHeadPosition.x,vectorToHeadPosition.z));
+
+		var bearingToTarget = GetBearingForLongLats(horAngleBeteenHeadAndTargetPoint, AngleHelperMethods.PositionToLonLat(camera.transform.forward), AngleHelperMethods.PositionToLonLat(vectorToAttentionPoint));
+		Debug.LogError("B: " + bearingToTarget);
+
         Vector3 newPos = target.transform.position;
 
         newPos = mainCamera.WorldToViewportPoint(newPos);
@@ -74,7 +81,7 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 
 		Debug.DrawRay(rayToSceneFlicker.origin, rayToSceneFlicker.direction, Color.green, 1f);
 
-		SetVerticalAngle(rayToSceneFlicker);
+		SetAnglesForFlicker(rayToSceneFlicker);
 
         //m_icon.transform.position = newPos;
     }
@@ -91,7 +98,7 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
         return returnVector;
     }
 
-	private void SetVerticalAngle(Ray rayToSceneFlicker){
+	private void SetAnglesForFlicker(Ray rayToSceneFlicker){
 		// var rotation = Quaternion.FromToRotation(camera.transform.forward, rayToSceneFlicker.direction);
 		var oldLatLong = AngleHelperMethods.PositionToLonLat(transform.position);
 		var newLatLong = AngleHelperMethods.PositionToLonLat(rayToSceneFlicker.direction);
@@ -105,5 +112,18 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 		var up = new Vector3(0,1,0);
 		transform.RotateAround(Vector3.zero, up, longChange * -1f);
 		transform.RotateAround(Vector3.zero, transform.forward, latChange);
+	}
+
+
+	private float GetBearingForLongLats(float horAngleBeteenEyesAndTargetPoint, Vector2 longLatsForEyePosition, Vector2 longLatsForAttentionPosition){
+		var dLon = horAngleBeteenEyesAndTargetPoint * (1f / Mathf.Rad2Deg);
+		var lat2 = longLatsForAttentionPosition.y * (1f / Mathf.Rad2Deg);
+		var lat1 = longLatsForEyePosition.y * (1f / Mathf.Rad2Deg);
+
+		var y = Mathf.Sin(dLon) * Mathf.Cos(lat2);
+		var x = Mathf.Cos(lat1) * Mathf.Sin(lat2) - Mathf.Sin(lat1) * Mathf.Cos(lat2) * Mathf.Cos(dLon);
+		var brng = Mathf.Atan2(y, x);
+
+		return brng * Mathf.Rad2Deg;
 	}
 }

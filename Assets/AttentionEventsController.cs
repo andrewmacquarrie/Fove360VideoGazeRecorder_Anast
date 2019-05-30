@@ -6,7 +6,7 @@ using System.IO;
 public class AttentionEventsController : MonoBehaviour {
 
 	public AttentionEventArrow arrow;
-	public AttentionEventArrow flickerController;
+	public FlickerDotController flickerController;
 
 	public GameObject dataRecorder;
 
