@@ -82,8 +82,9 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 
 				var bearingToTarget = GetBearingForLongLats(horAngleBeteenHeadAndTargetPoint, longLatForHead, longLatForTarget);
 
-				// DEBUG: THIS DOESNT SEEM TO WORK QUITE RIGHT - but is it enough for a pilot study?				
-				tangentRotate.transform.localRotation = Quaternion.Euler(bearingToTarget - 90f,90f,0f);
+				// DEBUG: THIS DOESNT SEEM TO WORK QUITE RIGHT - but is it enough for a pilot study?	
+				var rollOfCamera = mainCamera.gameObject.transform.rotation.eulerAngles.z;		
+				tangentRotate.transform.localRotation = Quaternion.Euler(bearingToTarget - 90f + rollOfCamera,90f,0f);
 			}
 			
 			newPos = GetScreenPointOfAttentionTarget(tangentPoint);
