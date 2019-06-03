@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using UnityEngine.Video;
 
 public class AttentionEventsController : MonoBehaviour {
 
@@ -9,6 +10,8 @@ public class AttentionEventsController : MonoBehaviour {
 	public FlickerDotController flickerController;
 
 	public GameObject dataRecorder;
+
+	public VideoPlayer videoPlayer;
 
 	public ApplyLongLat target;
 
@@ -55,7 +58,7 @@ public class AttentionEventsController : MonoBehaviour {
 
 		var currentEvent = events [currentEventIndex];
 
-		if (Time.time > currentEvent.startTime) {
+		if (videoPlayer.time > currentEvent.startTime) {
 			if (currentEvent.type == "CLEAR") { // first, see if the event type from the file is telling us to stop the cue!
 				arrow.Clear ();
 				flickerController.Clear();

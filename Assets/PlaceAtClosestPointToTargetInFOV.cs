@@ -10,6 +10,8 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 
 	private Camera mainCamera;
 	private float distanceToFlicker;
+	public GameObject tangentRotate;
+	public GameObject tangentPoint;
 
 	// Use this for initialization
 	void Start () {
@@ -52,14 +54,58 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 	// From https://github.com/Mouledoux/ConnectedHome/blob/master/Assets/Scripts/TargetIndicator.cs
 	private void UpdatePositionWithinFov()
     {		
-		var vectorToAttentionPoint = target.transform.position;
+		var newPos = GetScreenPointOfAttentionTarget(target);
+
+		var clampedPos = new Vector2();
+        clampedPos.x = Mathf.Clamp(newPos.x, m_edgeBuffer, Screen.width - m_edgeBuffer); // (val, min, max)
+        clampedPos.y = Mathf.Clamp(newPos.y, m_edgeBuffer, Screen.height - m_edgeBuffer);
+
+		if(clampedPos.x != newPos.x || clampedPos.y != newPos.y){
+			// the target doesn't fall inside the viewport, so we should place flicker on bearing to target on sphere
+			var vectorToAttentionPoint = target.transform.position;
+			var vectorToHeadPosition = camera.transform.forward;
+
+			var horAngleBeteenHeadAndTargetPoint = Vector2.SignedAngle (new Vector2 (vectorToAttentionPoint.x,vectorToAttentionPoint.z), new Vector2 (vectorToHeadPosition.x,vectorToHeadPosition.z));
+			
+			//Debug.LogError(horAngleBeteenHeadAndTargetPoint);
+
+			if(horAngleBeteenHeadAndTargetPoint > 90 || horAngleBeteenHeadAndTargetPoint < -90) {
+				// the target is on the other side - need to point left/right to assure arrow does't point over the top/bottom of sphere based on nearest bearing
+				if (horAngleBeteenHeadAndTargetPoint > 0) {
+					tangentRotate.transform.localRotation = Quaternion.Euler(new Vector3 (0,90f,0f));
+				} else {
+					tangentRotate.transform.localRotation = Quaternion.Euler(new Vector3 (180f,90f,0f));
+				} 
+			} else {
+				var longLatForHead = AngleHelperMethods.PositionToLonLat(camera.transform.forward);
+				var longLatForTarget = AngleHelperMethods.PositionToLonLat(vectorToAttentionPoint);
+
+				var bearingToTarget = GetBearingForLongLats(horAngleBeteenHeadAndTargetPoint, longLatForHead, longLatForTarget);
+
+				// DEBUG: THIS DOESNT SEEM TO WORK QUITE RIGHT - but is it enough for a pilot study?				
+				tangentRotate.transform.localRotation = Quaternion.Euler(bearingToTarget - 90f,90f,0f);
+			}
+			
+			newPos = GetScreenPointOfAttentionTarget(tangentPoint);
+
+			clampedPos.x = Mathf.Clamp(newPos.x, m_edgeBuffer, Screen.width - m_edgeBuffer); // (val, min, max)
+        	clampedPos.y = Mathf.Clamp(newPos.y, m_edgeBuffer, Screen.height - m_edgeBuffer);
+
+		}
+
+		Ray rayToSceneFlicker = mainCamera.ScreenPointToRay(clampedPos);
+		Debug.DrawRay(rayToSceneFlicker.origin, rayToSceneFlicker.direction, Color.green, 1f);
+		SetAnglesForFlicker(rayToSceneFlicker);
+
+        //m_icon.transform.position = newPos;
+    }
+
+	private Vector2 GetScreenPointOfAttentionTarget(GameObject attentionTarget){
+		var vectorToAttentionPoint = attentionTarget.transform.position;
 		var vectorToHeadPosition = camera.transform.forward;
-		var horAngleBeteenHeadAndTargetPoint = Vector2.SignedAngle (new Vector2 (vectorToAttentionPoint.x,vectorToAttentionPoint.z), new Vector2 (vectorToHeadPosition.x,vectorToHeadPosition.z));
+		//Debug.LogError("B: " + bearingToTarget);
 
-		var bearingToTarget = GetBearingForLongLats(horAngleBeteenHeadAndTargetPoint, AngleHelperMethods.PositionToLonLat(camera.transform.forward), AngleHelperMethods.PositionToLonLat(vectorToAttentionPoint));
-		Debug.LogError("B: " + bearingToTarget);
-
-        Vector3 newPos = target.transform.position;
+        Vector3 newPos = attentionTarget.transform.position;
 
         newPos = mainCamera.WorldToViewportPoint(newPos);
 
@@ -73,18 +119,9 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
         }
 
         newPos = mainCamera.ViewportToScreenPoint(newPos);
-
-        newPos.x = Mathf.Clamp(newPos.x, m_edgeBuffer, Screen.width - m_edgeBuffer);
-        newPos.y = Mathf.Clamp(newPos.y, m_edgeBuffer, Screen.height - m_edgeBuffer);
-
-		Ray rayToSceneFlicker = mainCamera.ScreenPointToRay(newPos);
-
-		Debug.DrawRay(rayToSceneFlicker.origin, rayToSceneFlicker.direction, Color.green, 1f);
-
-		SetAnglesForFlicker(rayToSceneFlicker);
-
-        //m_icon.transform.position = newPos;
-    }
+		return newPos;
+	}
+	
 
     public Vector3 Vector3Maxamize(Vector3 vector)
     {
