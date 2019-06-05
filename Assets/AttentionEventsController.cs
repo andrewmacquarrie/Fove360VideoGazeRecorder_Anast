@@ -67,7 +67,9 @@ public class AttentionEventsController : MonoBehaviour {
 			} 
 			else { // otherwise, use the randomly generated event type
 				if(currentCueTypeUntilCleared == "") {
-					if(Random.value > 0.5f) {
+					var randSelector =  Random.value;
+					// randSelector = 0.7f; // allows debug of one type of cue
+					if(randSelector > 0.5f) {
 						currentCueTypeUntilCleared = "ARROW_FOLLOW";
 					} else {
 						currentCueTypeUntilCleared = "FLICKER";

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RotateToFaceTarget : MonoBehaviour {
-
-	public GameObject eyeLocation;
 	private float hAngle;
 	private float vAngle;
 	public GameObject arrow;
@@ -25,24 +23,25 @@ public class RotateToFaceTarget : MonoBehaviour {
 	}
 
 	private void RotateToTarget(){
-		var vectorToEyePosition = eyeLocation.transform.position;
+		var vectorToArrowPosition = arrow.transform.position;
+
 		var rotH = Quaternion.AngleAxis(hAngle,Vector3.up);
 		var vectorToAttentionPoint = rotH * new Vector3(-1,0,0); // Vector3.forward;
-		var horAngleBeteenEyesAndTargetPoint = Vector2.SignedAngle (new Vector2 (vectorToAttentionPoint.x,vectorToAttentionPoint.z), new Vector2 (vectorToEyePosition.x,vectorToEyePosition.z));
+		var horAngleBeteenArrowAndTargetPoint = Vector2.SignedAngle (new Vector2 (vectorToAttentionPoint.x,vectorToAttentionPoint.z), new Vector2 (vectorToArrowPosition.x,vectorToArrowPosition.z));
 
-		if(horAngleBeteenEyesAndTargetPoint > 90 || horAngleBeteenEyesAndTargetPoint < -90) {
+		if(horAngleBeteenArrowAndTargetPoint > 90 || horAngleBeteenArrowAndTargetPoint < -90) {
 			// the target is on the other side - need to point left/right to assure arrow does't point over the top/bottom of sphere based on nearest bearing
-			if (horAngleBeteenEyesAndTargetPoint > 0) {
+			if (horAngleBeteenArrowAndTargetPoint > 0) {
 				arrow.transform.localRotation = Quaternion.Euler(new Vector3 (90, 0, -90));
 			} else {
 				arrow.transform.localRotation = Quaternion.Euler(new Vector3 (-90, 0, -90));
 			} 
 		} else {
 			// target is on this side of the sphere - make the arrow point to the correct bearing
-			var longLatsForEyePosition = AngleHelperMethods.PositionToLonLat(vectorToEyePosition); //   GetLatLongForEyePosition(vectorToEyePosition);
+			var longLatsForArrowPosition = AngleHelperMethods.PositionToLonLat(vectorToArrowPosition); //   GetLatLongForEyePosition(vectorToEyePosition);
 			//Debug.LogError(longLatsForEyePosition);
 			var longLatsForAttentionPosition = new Vector2(hAngle, vAngle);
-			var bearingToTarget = GetBearingForLongLats(horAngleBeteenEyesAndTargetPoint, longLatsForEyePosition, longLatsForAttentionPosition);
+			var bearingToTarget = GetBearingForLongLats(horAngleBeteenArrowAndTargetPoint, longLatsForArrowPosition, longLatsForAttentionPosition);
 
 			arrow.transform.localRotation = Quaternion.Euler(new Vector3 (bearingToTarget, 0, -90));
 		}
