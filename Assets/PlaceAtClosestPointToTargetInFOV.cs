@@ -5,18 +5,24 @@ using UnityEngine;
 public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 	// public GameObject eyeLocation;
 	public GameObject target;
-	public GameObject camera;
+	// public GameObject camera;
+
+	private GameObject leftEyeCamera;
+	private GameObject rightEyeCamera;
 	public float m_edgeBuffer = 30f;
 
-	private Camera mainCamera;
+	//private Camera mainCamera;
 	private float distanceToFlicker;
 	public GameObject tangentRotate;
 	public GameObject tangentPoint;
 
 	// Use this for initialization
 	void Start () {
-		mainCamera = camera.GetComponent<Camera>();
+		//mainCamera = camera.GetComponent<Camera>();
 		distanceToFlicker = transform.position.magnitude;
+
+		leftEyeCamera = GameObject.Find("FOVE Eye (Left)");
+		rightEyeCamera = GameObject.Find("FOVE Eye (Right)");
 	}
 	
 	// Update is called once per frame
@@ -55,15 +61,16 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 	private void UpdatePositionWithinFov()
     {		
 		var newPos = GetScreenPointOfAttentionTarget(target);
+		var leftEyeCam = leftEyeCamera.GetComponent<Camera>();
 
 		var clampedPos = new Vector2();
-        clampedPos.x = Mathf.Clamp(newPos.x, m_edgeBuffer, Screen.width - m_edgeBuffer); // (val, min, max)
-        clampedPos.y = Mathf.Clamp(newPos.y, m_edgeBuffer, Screen.height - m_edgeBuffer);
+        clampedPos.x = Mathf.Clamp(newPos.x, m_edgeBuffer, leftEyeCam.scaledPixelWidth - m_edgeBuffer); // (val, min, max)
+        clampedPos.y = Mathf.Clamp(newPos.y, m_edgeBuffer, leftEyeCam.scaledPixelHeight - m_edgeBuffer);
 
 		if(clampedPos.x != newPos.x || clampedPos.y != newPos.y){
 			// the target doesn't fall inside the viewport, so we should place flicker on bearing to target on sphere
 			var vectorToAttentionPoint = target.transform.position;
-			var vectorToHeadPosition = camera.transform.forward;
+			var vectorToHeadPosition = leftEyeCamera.transform.forward;
 
 			var horAngleBeteenHeadAndTargetPoint = Vector2.SignedAngle (new Vector2 (vectorToAttentionPoint.x,vectorToAttentionPoint.z), new Vector2 (vectorToHeadPosition.x,vectorToHeadPosition.z));
 			
@@ -77,24 +84,24 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 					tangentRotate.transform.localRotation = Quaternion.Euler(new Vector3 (180f,90f,0f));
 				} 
 			} else {
-				var longLatForHead = AngleHelperMethods.PositionToLonLat(camera.transform.forward);
+				var longLatForHead = AngleHelperMethods.PositionToLonLat(leftEyeCamera.transform.forward);
 				var longLatForTarget = AngleHelperMethods.PositionToLonLat(vectorToAttentionPoint);
 
 				var bearingToTarget = GetBearingForLongLats(horAngleBeteenHeadAndTargetPoint, longLatForHead, longLatForTarget);
 
 				// DEBUG: THIS DOESNT SEEM TO WORK QUITE RIGHT - but is it enough for a pilot study?	
-				var rollOfCamera = mainCamera.gameObject.transform.rotation.eulerAngles.z;		
+				var rollOfCamera = leftEyeCamera.transform.rotation.eulerAngles.z;		
 				tangentRotate.transform.localRotation = Quaternion.Euler(bearingToTarget - 90f + rollOfCamera,90f,0f);
 			}
 			
 			newPos = GetScreenPointOfAttentionTarget(tangentPoint);
 
-			clampedPos.x = Mathf.Clamp(newPos.x, m_edgeBuffer, Screen.width - m_edgeBuffer); // (val, min, max)
-        	clampedPos.y = Mathf.Clamp(newPos.y, m_edgeBuffer, Screen.height - m_edgeBuffer);
+			clampedPos.x = Mathf.Clamp(newPos.x, m_edgeBuffer, leftEyeCam.scaledPixelWidth - m_edgeBuffer); // (val, min, max)
+        	clampedPos.y = Mathf.Clamp(newPos.y, m_edgeBuffer, leftEyeCam.scaledPixelHeight - m_edgeBuffer);
 
 		}
 
-		Ray rayToSceneFlicker = mainCamera.ScreenPointToRay(clampedPos);
+		Ray rayToSceneFlicker = leftEyeCam.ScreenPointToRay(clampedPos);
 		Debug.DrawRay(rayToSceneFlicker.origin, rayToSceneFlicker.direction, Color.green, 1f);
 		SetAnglesForFlicker(rayToSceneFlicker);
 
@@ -103,12 +110,15 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 
 	private Vector2 GetScreenPointOfAttentionTarget(GameObject attentionTarget){
 		var vectorToAttentionPoint = attentionTarget.transform.position;
-		var vectorToHeadPosition = camera.transform.forward;
+		var vectorToHeadPosition = leftEyeCamera.transform.forward;
 		//Debug.LogError("B: " + bearingToTarget);
+
+		var leftEyeCam = leftEyeCamera.GetComponent<Camera>();
 
         Vector3 newPos = attentionTarget.transform.position;
 
-        newPos = mainCamera.WorldToViewportPoint(newPos);
+        newPos = leftEyeCam.WorldToViewportPoint(newPos);
+
 
         if(newPos.z < 0)
         {
@@ -119,7 +129,10 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
             newPos = Vector3Maxamize(newPos);
         }
 
-        newPos = mainCamera.ViewportToScreenPoint(newPos);
+        newPos = leftEyeCam.ViewportToScreenPoint(newPos);
+
+		Debug.Log("viewpoint pixel position: " + newPos);
+
 		return newPos;
 	}
 	
