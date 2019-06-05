@@ -5,6 +5,7 @@ using UnityEngine;
 public class DeactivateWithinAngleToTarget : MonoBehaviour {
 
 	public float deactivationAngle;
+	public float reactivationAngle;
 	public GameObject objectToDeactivate;
 	public GameObject eyeLocation;
 	public GameObject target;
@@ -45,12 +46,13 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 		// claculate 3d angle between these, and add deactivationAngle to that - if less than this, deactivate object
 		var vectorToTarget = target.transform.position;
 		var angleTargetCentreToClosestTargetPoint = Vector3.Angle(vectorToTarget, vectorToClosestPointOnTarget);
-		var totalAllowableAngle = angleTargetCentreToClosestTargetPoint + deactivationAngle;
-
+		var totalAllowableAngleForDeactivation = angleTargetCentreToClosestTargetPoint + deactivationAngle;
+		var totalAllowableAngleForReactivation = angleTargetCentreToClosestTargetPoint + reactivationAngle;
 		var vectorToObjectDeactivationIsBasedOn = deactivateBasedOnThisObjectsLocation.transform.position;
-		if(Vector3.Angle(vectorToObjectDeactivationIsBasedOn, vectorToTarget) < totalAllowableAngle){
+
+		if(Vector3.Angle(vectorToObjectDeactivationIsBasedOn, vectorToTarget) < totalAllowableAngleForDeactivation){
 			objectToDeactivate.SetActive(false);
-		} else {
+		} else if (Vector3.Angle(vectorToObjectDeactivationIsBasedOn, vectorToTarget) > totalAllowableAngleForReactivation) {
 			objectToDeactivate.SetActive(true);
 		}
 	}
