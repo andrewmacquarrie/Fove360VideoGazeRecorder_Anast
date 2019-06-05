@@ -8,6 +8,7 @@ public class AttentionEventsController : MonoBehaviour {
 
 	public AttentionEventArrow arrow;
 	public FlickerDotController flickerController;
+	public DrawTargetRect drawTarget;
 
 	public GameObject dataRecorder;
 
@@ -83,6 +84,9 @@ public class AttentionEventsController : MonoBehaviour {
 				} else if (currentCueTypeUntilCleared == "FLICKER") {
 					flickerController.PointTowards (currentEvent);
 				}
+
+				// only for debug!
+				drawTarget.SetTargetBox(currentEvent);
 			}	
 			currentEventIndex++;
 		}

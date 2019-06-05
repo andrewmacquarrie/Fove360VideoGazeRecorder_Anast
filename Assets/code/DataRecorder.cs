@@ -50,7 +50,7 @@ public class DataRecorder : MonoBehaviour {
         foveInterface = fove.GetComponent<FoveInterface>();
     }
 
-	void Update() {
+	void FixedUpdate() {
         if(!recordingTrackingData)
             return;
 
