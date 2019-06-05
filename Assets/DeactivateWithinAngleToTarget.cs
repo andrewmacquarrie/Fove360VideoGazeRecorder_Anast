@@ -9,6 +9,8 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 	public GameObject eyeLocation;
 	public GameObject target;
 
+	public GameObject deactivateBasedOnThisObjectsLocation;
+
 	private Vector2 targetSize;
 	private AttentionEvent e;
 
@@ -45,8 +47,8 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 		var angleTargetCentreToClosestTargetPoint = Vector3.Angle(vectorToTarget, vectorToClosestPointOnTarget);
 		var totalAllowableAngle = angleTargetCentreToClosestTargetPoint + deactivationAngle;
 
-		var vectorToEyePosition = eyeLocation.transform.position;
-		if(Vector3.Angle(vectorToEyePosition, vectorToTarget) < totalAllowableAngle){
+		var vectorToObjectDeactivationIsBasedOn = deactivateBasedOnThisObjectsLocation.transform.position;
+		if(Vector3.Angle(vectorToObjectDeactivationIsBasedOn, vectorToTarget) < totalAllowableAngle){
 			objectToDeactivate.SetActive(false);
 		} else {
 			objectToDeactivate.SetActive(true);
