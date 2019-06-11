@@ -13,6 +13,7 @@ public class FlickerDotController : MonoBehaviour {
 	public DeactivateWithinAngleToTarget deactivator;
 
 	bool showFlicker = false;
+	bool angleToTargetSaysIShouldBeActive = true;
 	private float hAngle;
 	private float vAngle;
 	private Vector2 targetSize;
@@ -25,7 +26,7 @@ public class FlickerDotController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (showFlicker) {
+		if (showFlicker && angleToTargetSaysIShouldBeActive) {
 			modulatingDot.SetActive(true);
 		} else {
 			modulatingDot.SetActive(false);
@@ -43,6 +44,11 @@ public class FlickerDotController : MonoBehaviour {
 
 	public void Clear() {
 		showFlicker = false;
-		modulatingDot.SetActive (false);
+		modulatingDot.SetActive(false); // this is the root object
+	}
+
+	public void ActivationStatusChangedByAngleToTarget(bool shouldActivate){
+		angleToTargetSaysIShouldBeActive = shouldActivate;
+		// Debug.LogError(shouldActivate);
 	}
 }

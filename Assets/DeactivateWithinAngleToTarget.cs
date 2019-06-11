@@ -6,7 +6,8 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 
 	public float deactivationAngle;
 	public float reactivationAngle;
-	public GameObject objectToDeactivate;
+	public AttentionEventArrow objectToDeactivateArrow;
+	public FlickerDotController objectToDeactivateFlicker;
 	public GameObject eyeLocation;
 	public GameObject target;
 
@@ -26,7 +27,7 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 			// no targets happened yet
 			return;
 		}
-		
+
 		// get the pixel coords for the target and eye positions
 		var targetPixelCoords = AngleHelperMethods.PositionToPixelCoords(target.transform.position);
 		var eyePixelCoords = AngleHelperMethods.PositionToPixelCoords(eyeLocation.transform.position);
@@ -51,9 +52,18 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 		var vectorToObjectDeactivationIsBasedOn = deactivateBasedOnThisObjectsLocation.transform.position;
 
 		if(Vector3.Angle(vectorToObjectDeactivationIsBasedOn, vectorToTarget) < totalAllowableAngleForDeactivation){
-			objectToDeactivate.SetActive(false);
+			// deactivation angle reached
+			if(objectToDeactivateArrow != null) {
+				objectToDeactivateArrow.ActivationStatusChangedByAngleToTarget(false);
+			} else {
+				objectToDeactivateFlicker.ActivationStatusChangedByAngleToTarget(false);
+			}
 		} else if (Vector3.Angle(vectorToObjectDeactivationIsBasedOn, vectorToTarget) > totalAllowableAngleForReactivation) {
-			objectToDeactivate.SetActive(true);
+			if(objectToDeactivateArrow != null) {
+				objectToDeactivateArrow.ActivationStatusChangedByAngleToTarget(true);
+			} else {
+				objectToDeactivateFlicker.ActivationStatusChangedByAngleToTarget(true);
+			}
 		}
 	}
 

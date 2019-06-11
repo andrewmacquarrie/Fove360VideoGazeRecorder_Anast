@@ -6,6 +6,7 @@ using UnityEngine.Video;
 public class AttentionEventArrow : MonoBehaviour {
 
 	private bool hidden;
+	private bool angleToTargetSaysIShouldBeActive; // cue can also be hidden if distance to target is reached
 	private float hAngle;
 	private float vAngle;
 	private Vector2 targetSize;
@@ -37,7 +38,7 @@ public class AttentionEventArrow : MonoBehaviour {
 	void Update () {
 		if(isArrow){
 			var r = arrow.GetComponent<MeshRenderer> ();
-			r.enabled = !hidden;
+			r.enabled = (!hidden && angleToTargetSaysIShouldBeActive);
 		} else {
 			// its the flicker
 		}
@@ -120,6 +121,10 @@ public class AttentionEventArrow : MonoBehaviour {
 
 	public void Clear(){
 		hidden = true;
+	}
+
+	public void ActivationStatusChangedByAngleToTarget(bool shouldActivate){
+		angleToTargetSaysIShouldBeActive = shouldActivate;
 	}
 
 }
