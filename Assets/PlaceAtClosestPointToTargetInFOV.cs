@@ -23,6 +23,11 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 
 		leftEyeCamera = GameObject.Find("FOVE Eye (Left)");
 		rightEyeCamera = GameObject.Find("FOVE Eye (Right)");
+
+		if(leftEyeCamera == null){ // the FOVE isn't connected - just use the regular camera
+			leftEyeCamera = GameObject.Find("Fove Interface");
+			rightEyeCamera = GameObject.Find("Fove Interface");
+		}
 	}
 	
 	// Update is called once per frame
