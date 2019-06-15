@@ -33,32 +33,6 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		UpdatePositionWithinFov();
-
-		/* 
-		var vectorToTarget = target.transform.position;
-		var vectorToHeadPosition = camera.transform.forward;
-		var horAngleBeteenHeadAndTargetPoint = Vector2.SignedAngle (new Vector2 (vectorToTarget.x,vectorToTarget.z), new Vector2 (vectorToHeadPosition.x,vectorToHeadPosition.z));
-
-		if(horAngleBeteenHeadAndTargetPoint > 90 || horAngleBeteenHeadAndTargetPoint < -90) {
-			// the target is on the other side - need to point left/right to assure arrow does't point over the top/bottom of sphere based on nearest bearing
-			if (horAngleBeteenEyesAndTargetPoint > 0) {
-				// set to right FOV
-				
-				
-				// arrow.transform.localRotation = Quaternion.Euler(new Vector3 (90, 0, -90));
-			} else {
-				// set to left FOV
-
-				//arrow.transform.localRotation = Quaternion.Euler(new Vector3 (-90, 0, -90));
-			} 
-		} else {
-			// find 3D angle to target from HEAD direction
-
-			// if is greater than FOV / 2, set to FOV / 2
-
-			// if it's less than FOV, place on target
-
-		}*/
 	}
 
 
@@ -94,14 +68,15 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 
 				var bearingToTarget = GetBearingForLongLats(horAngleBeteenHeadAndTargetPoint, longLatForHead, longLatForTarget);
 
-				// DEBUG: THIS DOESNT SEEM TO WORK QUITE RIGHT - but is it enough for a pilot study?	
+				// DEBUG: THIS DOESNT SEEM TO WORK QUITE RIGHT - but is it enough for a pilot study?
+                // Actually this totally does work - the issue seems to be later, when we clamp the value to the screen fov
 				var rollOfCamera = leftEyeCamera.transform.rotation.eulerAngles.z;		
-				tangentRotate.transform.localRotation = Quaternion.Euler(bearingToTarget - 90f - rollOfCamera,90f,0f);
+				tangentRotate.transform.localRotation = Quaternion.Euler(bearingToTarget - 90f + rollOfCamera,90f,0f);
 			}
-			
-			newPos = GetScreenPointOfAttentionTarget(tangentPoint);
-
-			clampedPos.x = Mathf.Clamp(newPos.x, m_edgeBuffer, leftEyeCam.scaledPixelWidth - m_edgeBuffer); // (val, min, max)
+            
+            newPos = GetScreenPointInDirection(leftEyeCam, tangentRotate.transform.position, tangentPoint.transform.position);
+            
+            clampedPos.x = Mathf.Clamp(newPos.x, m_edgeBuffer, leftEyeCam.scaledPixelWidth - m_edgeBuffer); // (val, min, max)
         	clampedPos.y = Mathf.Clamp(newPos.y, m_edgeBuffer, leftEyeCam.scaledPixelHeight - m_edgeBuffer);
 
 		}
@@ -113,9 +88,57 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
         //m_icon.transform.position = newPos;
     }
 
+    private int GetIndexOfLowestValue(float[] arr)
+    {
+        float value = float.PositiveInfinity;
+        int index = -1;
+        for (int i = 0; i < arr.Length; i++)
+        {
+            if (arr[i] < value)
+            {
+                index = i;
+                value = arr[i];
+            }
+        }
+        return index;
+    }
+
+    private Vector2 GetScreenPointInDirection(Camera cam, Vector3 centrePos, Vector3 tangentPointPos)
+    {
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(cam);
+        var ray = new Ray(centrePos, tangentPointPos - centrePos);
+
+        var screenPoints = new Vector2[4];
+        var distances = new float[4];
+
+        for (int i = 0; i < 4; i++)
+        {
+            float enter = 0.0f;
+
+            if (planes[i].Raycast(ray, out enter))
+            {
+                //Get the point that is clicked
+                Vector3 hitPoint = ray.GetPoint(enter);
+                distances[i] = enter;
+                screenPoints[i] = cam.ViewportToScreenPoint(cam.WorldToViewportPoint(hitPoint));
+            } else
+            {
+                distances[i] = Mathf.Infinity;
+            }
+        }
+
+        // as the line will eventually intersect most planes, want to get the closest hit point
+        var indexOfLowestDistance = GetIndexOfLowestValue(distances);
+        if(indexOfLowestDistance < 0)
+        {
+            return new Vector2(0, 0);
+        }
+        return screenPoints[indexOfLowestDistance];
+    }
+
 	private Vector2 GetScreenPointOfAttentionTarget(GameObject attentionTarget){
-		var vectorToAttentionPoint = attentionTarget.transform.position;
-		var vectorToHeadPosition = leftEyeCamera.transform.forward;
+		// var vectorToAttentionPoint = attentionTarget.transform.position;
+		// var vectorToHeadPosition = leftEyeCamera.transform.forward;
 		//Debug.LogError("B: " + bearingToTarget);
 
 		var leftEyeCam = leftEyeCamera.GetComponent<Camera>();
