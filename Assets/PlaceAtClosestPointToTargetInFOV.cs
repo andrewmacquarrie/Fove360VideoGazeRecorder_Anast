@@ -96,7 +96,7 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 
 				// DEBUG: THIS DOESNT SEEM TO WORK QUITE RIGHT - but is it enough for a pilot study?	
 				var rollOfCamera = leftEyeCamera.transform.rotation.eulerAngles.z;		
-				tangentRotate.transform.localRotation = Quaternion.Euler(bearingToTarget - 90f + rollOfCamera,90f,0f);
+				tangentRotate.transform.localRotation = Quaternion.Euler(bearingToTarget - 90f - rollOfCamera,90f,0f);
 			}
 			
 			newPos = GetScreenPointOfAttentionTarget(tangentPoint);

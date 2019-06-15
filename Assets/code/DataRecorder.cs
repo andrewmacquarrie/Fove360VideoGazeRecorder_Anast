@@ -92,6 +92,7 @@ public class DataRecorder : MonoBehaviour {
         if (vp.isPlaying) {
             string[] data = new string[]{ vp.time.ToString(), cueType};
             cueTypeStringWriter.Write(string.Join(delimiter, data) + "\n");
+            cueTypeStringWriter.Flush();
         }
     }
 

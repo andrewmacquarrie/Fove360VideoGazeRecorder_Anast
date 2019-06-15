@@ -1,6 +1,5 @@
 
-  {"events": [{"startTime": 0,"targetHorPixel":2136,"targetVerPixel":981, "height": 198, "width": 320, "type": ""},
-{"startTime": 41,"targetHorPixel":2136,"targetVerPixel":981, "height": 198, "width": 320, "type": ""},
+  {"events": [{"startTime": 41,"targetHorPixel":2136,"targetVerPixel":981, "height": 198, "width": 320, "type": ""},
 {"startTime": 41.1,"targetHorPixel":2136,"targetVerPixel":981, "height": 198, "width": 320, "type": ""},
 {"startTime": 41.2,"targetHorPixel":2136,"targetVerPixel":981, "height": 198, "width": 320, "type": ""},
 {"startTime": 41.3,"targetHorPixel":2136,"targetVerPixel":981, "height": 198, "width": 320, "type": ""},
