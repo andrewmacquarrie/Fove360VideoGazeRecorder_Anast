@@ -15,9 +15,10 @@ public class AttentionEventsController : MonoBehaviour {
 	public VideoPlayer videoPlayer;
 
 	public ApplyLongLat target;
+    
+    public TextAsset eventsFile;
 
-	public string PathToEventsFile;
-	private List<AttentionEvent> events;
+    private List<AttentionEvent> events;
 	int currentEventIndex;
 
 	private string currentCueTypeUntilCleared = "";
@@ -31,13 +32,9 @@ public class AttentionEventsController : MonoBehaviour {
 	}
 
 	private List<AttentionEvent> LoadAttentionEvents(){
-		if (File.Exists (PathToEventsFile)) {
-			string dataAsJson = File.ReadAllText (PathToEventsFile);
-			var allEventsContainer = JsonUtility.FromJson<AllAttentionEventData> (dataAsJson);
-			return allEventsContainer.events;
-		}
-		Debug.Log ("Not able to load events - file path doesnt contain any events: " + PathToEventsFile);
-		return new List<AttentionEvent> ();
+        string dataAsJson = eventsFile.text;
+        var allEventsContainer = JsonUtility.FromJson<AllAttentionEventData> (dataAsJson);
+        return allEventsContainer.events;
 	}
 
     private void RandomiseListOrder(List<string> eventTypes)
