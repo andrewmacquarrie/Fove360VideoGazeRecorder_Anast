@@ -99,17 +99,20 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 		// claculate 3d angle between these, and add deactivationAngle to that - if less than this, deactivate object
 		var vectorToTarget = target.transform.position;
 		var angleTargetCentreToClosestTargetPoint = Vector3.Angle(vectorToTarget, vectorToClosestPointOnTarget);
-		var vectorToObjectDeactivationIsBasedOn = deactivateBasedOnThisObjectsLocation.transform.position;
+		var vectorToObjectDeactivationIsBasedOn = eyeLocation.transform.position; // unlike deactive, should consider "inside" based on eye location only
 
 		if(Vector3.Angle(vectorToObjectDeactivationIsBasedOn, vectorToTarget) < angleTargetCentreToClosestTargetPoint){
 			return true;
 		}
-
 		return false;
 	}
 
 	public void UpdateTargetSize(AttentionEvent ev){
 		targetSize = new Vector2(ev.width, ev.height);
 		e = ev;
+	}
+
+	public void Clear(){
+		e = null;
 	}
 }

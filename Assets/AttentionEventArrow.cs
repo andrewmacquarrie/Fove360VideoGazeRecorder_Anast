@@ -121,6 +121,7 @@ public class AttentionEventArrow : MonoBehaviour {
 
 	public void Clear(){
 		hidden = true;
+		deactivator.Clear(); // need to clear the event from deactivate too for logging and redirecting purposes
 	}
 
 	public void ActivationStatusChangedByAngleToTarget(bool shouldActivate){

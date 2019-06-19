@@ -45,6 +45,7 @@ public class FlickerDotController : MonoBehaviour {
 	public void Clear() {
 		showFlicker = false;
 		modulatingDot.SetActive(false); // this is the root object
+		deactivator.Clear(); // need to clear the event from deactivate too for logging and redirecting purposes
 	}
 
 	public void ActivationStatusChangedByAngleToTarget(bool shouldActivate){
