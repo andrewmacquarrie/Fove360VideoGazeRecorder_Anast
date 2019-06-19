@@ -24,6 +24,7 @@ public class AttentionEventsController : MonoBehaviour {
 	private string currentCueTypeUntilCleared = "";
 
     private List<string> attentionEventTypes;
+	private int numberOfCueReactivations = 0;
 
 	[System.Serializable]
 	public class AllAttentionEventData
@@ -74,11 +75,11 @@ public class AttentionEventsController : MonoBehaviour {
 
 		if (videoPlayer.time > currentEvent.startTime) {
 			if (currentEvent.type == "CLEAR") { // first, see if the event type from the file is telling us to stop the cue!
-				arrow.Clear ();
-				flickerController.Clear();
-				currentCueTypeUntilCleared = "";
+				ClearCue();
 			} 
-			else { // otherwise, use the randomly generated event type
+			else if (currentEvent.type == "WAITING_FOR_NEXT_CLEAR") {
+				// We cleared the cue through redirect number, so don't listen to other file events until the CLEAR cue is found
+			} else { // otherwise, use the randomly generated event type
 				if(currentCueTypeUntilCleared == "") {
                     /*
 					var randSelector =  Random.value;
@@ -110,5 +111,23 @@ public class AttentionEventsController : MonoBehaviour {
 			}	
 			currentEventIndex++;
 		}
+	}
+
+	public void CueReactivatedOnLeavingTargetArea(){
+		numberOfCueReactivations = numberOfCueReactivations + 1;
+		Debug.LogError("Cue reactivations: " + numberOfCueReactivations);
+		if(numberOfCueReactivations > 2){ // 2 reactivations in total, as the first one happens when the target first starts
+			ClearCue();
+			Debug.LogError("Deactivated cue due to two target entries!");
+			currentCueTypeUntilCleared = "WAITING_FOR_NEXT_CLEAR"; // the cue was turned off by redirect numbers. We neeed to force the system not to take the next cue in the list, until it's cleared by a CLEAR line
+		}
+	}
+
+	private void ClearCue(){
+		arrow.Clear ();
+		flickerController.Clear();
+		target.ApplyLongLatToPosition(1, 1); // get target out of the way
+		currentCueTypeUntilCleared = "";
+		numberOfCueReactivations = 0;
 	}
 }

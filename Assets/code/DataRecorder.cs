@@ -30,6 +30,9 @@ public class DataRecorder : MonoBehaviour {
     private TextWriter orientationStringWriter;
     private TextWriter cueTypeStringWriter;
 
+    public DeactivateWithinAngleToTarget arrowTargetChecker;
+    public DeactivateWithinAngleToTarget flickerTargetChecker;
+
     // Use this for initialization
     void Start ()
     {   
@@ -40,12 +43,13 @@ public class DataRecorder : MonoBehaviour {
         orientationStringWriter = new StreamWriter(orientationDataFilePath);
         string[] trackingHeaders = new string[] { "video_time", "x_rot", "y_rot", "z_rot", "quat_x", "quat_y", "quat_z", "quat_w",
             "left_eye_vector_x", "left_eye_vector_y", "left_eye_vector_z", "right_eye_vector_x", "right_eye_vector_y", "right_eye_vector_z",
-            "left_eye_texture_x", "left_eye_texture_y", "right_eye_texture_x", "right_eye_texture_y" };
+            "left_eye_texture_x", "left_eye_texture_y", "right_eye_texture_x", "right_eye_texture_y", "inside_target_area" };
         orientationStringWriter.Write(string.Join(delimiter, trackingHeaders) + "\n");
 
         cueTypeStringWriter = new StreamWriter(cueTypeDataFilePath);
         string[] cueTypeHeaders = new string[] { "video_time", "cue_ype" };
         cueTypeStringWriter.Write(string.Join(delimiter, cueTypeHeaders) + "\n");
+        cueTypeStringWriter.Close();
 
         foveInterface = fove.GetComponent<FoveInterface>();
     }
@@ -81,7 +85,7 @@ public class DataRecorder : MonoBehaviour {
 
             string[] data = new string[]{ vp.time.ToString(), euler.x.ToString(), euler.y.ToString(), euler.z.ToString(), quaternion.x.ToString(), quaternion.y.ToString(), quaternion.z.ToString(), quaternion.w.ToString(),
                 leftRay.direction.x.ToString(), leftRay.direction.y.ToString(), leftRay.direction.z.ToString(), rightRay.direction.x.ToString(), rightRay.direction.y.ToString(), rightRay.direction.z.ToString(),
-                pixeluvLeft.x.ToString(), pixeluvLeft.y.ToString(), pixeluvRight.x.ToString(), pixeluvRight.y.ToString()};
+                pixeluvLeft.x.ToString(), pixeluvLeft.y.ToString(), pixeluvRight.x.ToString(), pixeluvRight.y.ToString(), (arrowTargetChecker.InsideTargetArea() || flickerTargetChecker.InsideTargetArea()).ToString() };
 
             orientationStringWriter.Write(string.Join(delimiter, data) + "\n");
         }
@@ -90,9 +94,10 @@ public class DataRecorder : MonoBehaviour {
     public void RecordCueType(string cueType) {
         var vp = videoSphere.GetComponent<VideoPlayer>();
         if (vp.isPlaying) {
+            cueTypeStringWriter = new StreamWriter(cueTypeDataFilePath, true);
             string[] data = new string[]{ vp.time.ToString(), cueType};
             cueTypeStringWriter.Write(string.Join(delimiter, data) + "\n");
-            cueTypeStringWriter.Flush();
+            cueTypeStringWriter.Close();
         }
     }
 
@@ -125,6 +130,5 @@ public class DataRecorder : MonoBehaviour {
     {
         Debug.Log("Application ending after " + Time.time + " seconds. Closing file writer from Data Recorder");
         orientationStringWriter.Close();
-        cueTypeStringWriter.Close();
     }
 }
