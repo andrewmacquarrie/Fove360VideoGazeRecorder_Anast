@@ -19,9 +19,11 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 	private Vector2 targetSize;
 	private AttentionEvent e;
 
+	private bool firstRun;
+
 	// Use this for initialization
 	void Start () {
-		
+		firstRun = true;
 	}
 	
 	// Update is called once per frame
@@ -70,8 +72,12 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 				objectToDeactivateFlicker.ActivationStatusChangedByAngleToTarget(true);
 			}
 
-			attentionEventsController.CueReactivatedOnLeavingTargetArea();
+			if(!firstRun){ // stop the first instance of arrow or flicker increasing this
+				attentionEventsController.CueReactivatedOnLeavingTargetArea();
+			}
 		}
+
+		firstRun = false;
 	}
 
 	public bool InsideTargetArea(){

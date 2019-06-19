@@ -115,8 +115,8 @@ public class AttentionEventsController : MonoBehaviour {
 
 	public void CueReactivatedOnLeavingTargetArea(){
 		numberOfCueReactivations = numberOfCueReactivations + 1;
-		Debug.LogError("Cue reactivations: " + numberOfCueReactivations);
-		if(numberOfCueReactivations > 2){ // 2 reactivations in total, as the first one happens when the target first starts
+		// Debug.LogError("Cue reactivations: " + numberOfCueReactivations);
+		if(numberOfCueReactivations > 1){ // 2 reactivations in total, as the first one happens when the target first starts
 			ClearCue();
 			currentCueTypeUntilCleared = "WAITING_FOR_NEXT_CLEAR"; // the cue was turned off by redirect numbers. We neeed to force the system not to take the next cue in the list, until it's cleared by a CLEAR line
 		}
