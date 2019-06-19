@@ -77,7 +77,7 @@ public class AttentionEventsController : MonoBehaviour {
 			if (currentEvent.type == "CLEAR") { // first, see if the event type from the file is telling us to stop the cue!
 				ClearCue();
 			} 
-			else if (currentEvent.type == "WAITING_FOR_NEXT_CLEAR") {
+			else if (currentCueTypeUntilCleared == "WAITING_FOR_NEXT_CLEAR") {
 				// We cleared the cue through redirect number, so don't listen to other file events until the CLEAR cue is found
 			} else { // otherwise, use the randomly generated event type
 				if(currentCueTypeUntilCleared == "") {
@@ -118,7 +118,6 @@ public class AttentionEventsController : MonoBehaviour {
 		Debug.LogError("Cue reactivations: " + numberOfCueReactivations);
 		if(numberOfCueReactivations > 2){ // 2 reactivations in total, as the first one happens when the target first starts
 			ClearCue();
-			Debug.LogError("Deactivated cue due to two target entries!");
 			currentCueTypeUntilCleared = "WAITING_FOR_NEXT_CLEAR"; // the cue was turned off by redirect numbers. We neeed to force the system not to take the next cue in the list, until it's cleared by a CLEAR line
 		}
 	}
