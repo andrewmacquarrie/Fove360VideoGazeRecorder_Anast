@@ -14,6 +14,7 @@ public class DataRecorder : MonoBehaviour {
 
 	private string orientationDataFilePath;
 	private string cueTypeDataFilePath;
+	private string cueLocationDataFilePath;
 
     public GameObject fove;
     public GameObject videoSphere;
@@ -29,9 +30,12 @@ public class DataRecorder : MonoBehaviour {
 
     private TextWriter orientationStringWriter;
     private TextWriter cueTypeStringWriter;
+    private TextWriter cueLocationStringWriter;
 
     public DeactivateWithinAngleToTarget arrowTargetChecker;
     public DeactivateWithinAngleToTarget flickerTargetChecker;
+
+    public AttentionEventsController eventManager;
 
     // Use this for initialization
     void Start ()
@@ -39,6 +43,7 @@ public class DataRecorder : MonoBehaviour {
         Scene scene = SceneManager.GetActiveScene();
         orientationDataFilePath = "./DataRecordings/" + participantId + "_" + scene.name + DateTime.Now.ToString("MM-dd-yy_hh-mm-ss") + "_tracking.csv";
         cueTypeDataFilePath = "./DataRecordings/" + participantId + "_" + scene.name + DateTime.Now.ToString("MM-dd-yy_hh-mm-ss") + "_cues.csv";
+        cueLocationDataFilePath = "./DataRecordings/" + participantId + "_" + scene.name + DateTime.Now.ToString("MM-dd-yy_hh-mm-ss") + "_cueLocation.csv";
         
         orientationStringWriter = new StreamWriter(orientationDataFilePath);
         string[] trackingHeaders = new string[] { "video_time", "x_rot", "y_rot", "z_rot", "quat_x", "quat_y", "quat_z", "quat_w",
@@ -50,6 +55,10 @@ public class DataRecorder : MonoBehaviour {
         string[] cueTypeHeaders = new string[] { "video_time", "cue_ype" };
         cueTypeStringWriter.Write(string.Join(delimiter, cueTypeHeaders) + "\n");
         cueTypeStringWriter.Close();
+
+        cueLocationStringWriter = new StreamWriter(cueLocationDataFilePath);
+        string[] cueLocationHeaders = new string[] { "video_time", "long", "lat", "pixel_x", "pixel_y", "cue_type" };
+        cueLocationStringWriter.Write(string.Join(delimiter, cueLocationHeaders) + "\n");
 
         foveInterface = fove.GetComponent<FoveInterface>();
     }
@@ -89,6 +98,22 @@ public class DataRecorder : MonoBehaviour {
 
             orientationStringWriter.Write(string.Join(delimiter, data) + "\n");
         }
+    }
+
+    void Update(){
+        // dont need to record cue location quite as frquently...
+        if(!recordingTrackingData)
+            return;
+
+        string[] cueLocationData = eventManager.GetLoggingData();
+
+        // Headers: { "video_time", "long", "lat", "pixel_x", "pixel_y", "cue_type" };
+        if(cueLocationData[5] == ""){
+            // there isn't a cue at the moment, so don't bother logging
+            return;
+        }
+
+        cueLocationStringWriter.Write(string.Join(delimiter, cueLocationData) + "\n");
     }
 
     public void RecordCueType(string cueType) {

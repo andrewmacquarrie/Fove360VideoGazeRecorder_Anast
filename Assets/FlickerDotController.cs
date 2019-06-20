@@ -52,4 +52,9 @@ public class FlickerDotController : MonoBehaviour {
 		angleToTargetSaysIShouldBeActive = shouldActivate;
 		// Debug.LogError(shouldActivate);
 	}
+
+	public List<string> GetLoggingData(){
+		//  "long", "lat", "pixel_x", "pixel_y",
+		return new List<string>(new string[] { hAngle.ToString(), vAngle.ToString(), AngleHelperMethods.LongToPixelCoordX(hAngle).ToString(), AngleHelperMethods.LatToPixelCoordY(vAngle).ToString() });
+	}
 }

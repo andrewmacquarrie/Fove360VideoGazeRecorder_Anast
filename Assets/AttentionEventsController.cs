@@ -113,6 +113,24 @@ public class AttentionEventsController : MonoBehaviour {
 		}
 	}
 
+	public string[] GetLoggingData(){
+		// headers are: new string[] { "video_time", "long", "lat", "pixel_x", "pixel_y", "cue_type" };
+		if (currentCueTypeUntilCleared == "ARROW_FOLLOW") {
+			var sl = new List<string>();
+			sl.Add(videoPlayer.time.ToString());
+			sl.AddRange(arrow.GetLoggingData());
+			sl.Add("ARROW_FOLLOW");
+			return sl.ToArray();
+		} else if (currentCueTypeUntilCleared == "FLICKER") {
+			var sl = new List<string>();
+			sl.Add(videoPlayer.time.ToString());
+			sl.AddRange(flickerController.GetLoggingData());
+			sl.Add("FLICKER");
+			return sl.ToArray();
+		}
+		return new string[] { videoPlayer.time.ToString(), "", "", "", "", "" };
+	}
+
 	public void CueReactivatedOnLeavingTargetArea(){
 		numberOfCueReactivations = numberOfCueReactivations + 1;
 		// Debug.LogError("Cue reactivations: " + numberOfCueReactivations);
