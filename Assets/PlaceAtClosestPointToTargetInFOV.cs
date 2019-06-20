@@ -9,7 +9,8 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 
 	private GameObject leftEyeCamera;
 	private GameObject rightEyeCamera;
-	public float m_edgeBuffer = 30f;
+	public float m_edgeBufferHeight = 50f;
+	public float m_edgeBufferWidth = 20f;
 
 	//private Camera mainCamera;
 	private float distanceToFlicker;
@@ -43,8 +44,8 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 		var leftEyeCam = leftEyeCamera.GetComponent<Camera>();
 
 		var clampedPos = new Vector2();
-        clampedPos.x = Mathf.Clamp(newPos.x, m_edgeBuffer, leftEyeCam.scaledPixelWidth - m_edgeBuffer); // (val, min, max)
-        clampedPos.y = Mathf.Clamp(newPos.y, m_edgeBuffer, leftEyeCam.scaledPixelHeight - m_edgeBuffer);
+        clampedPos.x = Mathf.Clamp(newPos.x, m_edgeBufferWidth, leftEyeCam.scaledPixelWidth - m_edgeBufferWidth); // (val, min, max)
+        clampedPos.y = Mathf.Clamp(newPos.y, m_edgeBufferHeight, leftEyeCam.scaledPixelHeight - m_edgeBufferHeight);
 
 		if(clampedPos.x != newPos.x || clampedPos.y != newPos.y){
 			// the target doesn't fall inside the viewport, so we should place flicker on bearing to target on sphere
@@ -76,8 +77,8 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
             
             newPos = GetScreenPointInDirection(leftEyeCam, tangentRotate.transform.position, tangentPoint.transform.position);
             
-            clampedPos.x = Mathf.Clamp(newPos.x, m_edgeBuffer, leftEyeCam.scaledPixelWidth - m_edgeBuffer); // (val, min, max)
-        	clampedPos.y = Mathf.Clamp(newPos.y, m_edgeBuffer, leftEyeCam.scaledPixelHeight - m_edgeBuffer);
+            clampedPos.x = Mathf.Clamp(newPos.x, m_edgeBufferWidth, leftEyeCam.scaledPixelWidth - m_edgeBufferWidth); // (val, min, max)
+        	clampedPos.y = Mathf.Clamp(newPos.y, m_edgeBufferHeight, leftEyeCam.scaledPixelHeight - m_edgeBufferHeight);
 
 		}
 
