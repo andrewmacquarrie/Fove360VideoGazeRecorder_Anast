@@ -26,6 +26,8 @@ public class AttentionEventsController : MonoBehaviour {
     private List<string> attentionEventTypes;
 	private int numberOfCueReactivations = 0;
 
+	public bool fourArrowCues;
+
 	[System.Serializable]
 	public class AllAttentionEventData
 	{
@@ -51,7 +53,17 @@ public class AttentionEventsController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        attentionEventTypes = new List<string> { "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "FLICKER", "FLICKER", "FLICKER", "FLICKER" };
+		if(eventsFile.name.Contains("Intro")){
+			Debug.LogError("Even event split");
+			attentionEventTypes = new List<string> { "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "FLICKER", "FLICKER", "FLICKER" };
+		} else if(fourArrowCues){
+			Debug.LogError("Four arrows cues");
+			attentionEventTypes = new List<string> { "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "FLICKER", "FLICKER", "FLICKER" };
+		} else {
+			Debug.LogError("Four flicker cues");
+			attentionEventTypes = new List<string> { "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "FLICKER", "FLICKER", "FLICKER", "FLICKER" };
+		}
+
         RandomiseListOrder(attentionEventTypes);
         
         events = LoadAttentionEvents ();
