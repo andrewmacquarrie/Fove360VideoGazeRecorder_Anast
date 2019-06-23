@@ -54,13 +54,13 @@ public class AttentionEventsController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		if(eventsFile.name.Contains("Intro")){
-			Debug.LogError("Even event split");
+			// Debug.LogError("Even event split");
 			attentionEventTypes = new List<string> { "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "FLICKER", "FLICKER", "FLICKER" };
 		} else if(fourArrowCues){
-			Debug.LogError("Four arrows cues");
+			// Debug.LogError("Four arrows cues");
 			attentionEventTypes = new List<string> { "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "FLICKER", "FLICKER", "FLICKER" };
 		} else {
-			Debug.LogError("Four flicker cues");
+			// Debug.LogError("Four flicker cues");
 			attentionEventTypes = new List<string> { "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "FLICKER", "FLICKER", "FLICKER", "FLICKER" };
 		}
 
