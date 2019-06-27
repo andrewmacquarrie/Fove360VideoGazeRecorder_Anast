@@ -160,7 +160,7 @@ public class PlaceAtClosestPointToTargetInFOV : MonoBehaviour {
 
         newPos = leftEyeCam.ViewportToScreenPoint(newPos);
 
-		Debug.Log("viewpoint pixel position: " + newPos);
+		// Debug.Log("viewpoint pixel position: " + newPos);
 
 		return newPos;
 	}
