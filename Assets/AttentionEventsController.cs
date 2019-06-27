@@ -27,6 +27,7 @@ public class AttentionEventsController : MonoBehaviour {
 	private int numberOfCueReactivations = 0;
 
 	public bool fourArrowCues;
+    public InsideTargetAreaIdentifier insideTargetChecker;
 
 	[System.Serializable]
 	public class AllAttentionEventData
@@ -76,10 +77,18 @@ public class AttentionEventsController : MonoBehaviour {
 
 		//Debug.LogError(AngleHelperMethods.GetClosestPointOnTarget(new AttentionEvent() { targetHorPixel = 2000, targetVerPixel = 960, height = 10, width = 10 }, new Vector2(1920,500)));
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (currentEventIndex >= events.Count) {
+
+    public void SetEventTypesForDebug(List<string> eventsToUse)
+    {
+        attentionEventTypes = eventsToUse;
+    }
+
+
+    // Update is called once per frame
+    void Update () {
+        Debug.Log(numberOfCueReactivations);
+
+        if (currentEventIndex >= events.Count) {
 			return;
 		}
 
@@ -88,7 +97,8 @@ public class AttentionEventsController : MonoBehaviour {
 		if (videoPlayer.time > currentEvent.startTime) {
 			if (currentEvent.type == "CLEAR") { // first, see if the event type from the file is telling us to stop the cue!
 				ClearCue();
-			} 
+                insideTargetChecker.Clear();
+            } 
 			else if (currentCueTypeUntilCleared == "WAITING_FOR_NEXT_CLEAR") {
 				// We cleared the cue through redirect number, so don't listen to other file events until the CLEAR cue is found
 			} else { // otherwise, use the randomly generated event type
@@ -105,7 +115,7 @@ public class AttentionEventsController : MonoBehaviour {
                     currentCueTypeUntilCleared = attentionEventTypes[0];
                     attentionEventTypes.RemoveAt(0);
                     
-                    if (dataRecorder.activeSelf) {
+                    if (dataRecorder != null && dataRecorder.activeSelf) {
 						DataRecorder dr = dataRecorder.GetComponent<DataRecorder>();
 						dr.RecordCueType(currentCueTypeUntilCleared);
 					}
@@ -116,10 +126,11 @@ public class AttentionEventsController : MonoBehaviour {
 					arrow.FollowTo (currentEvent);
 				} else if (currentCueTypeUntilCleared == "FLICKER") {
 					flickerController.PointTowards (currentEvent);
-				}
+                }
+                insideTargetChecker.SetAttentionEvent(currentEvent);
 
-				// only for debug!
-				drawTarget.SetTargetBox(currentEvent);
+                // only for debug!
+                drawTarget.SetTargetBox(currentEvent);
 			}	
 			currentEventIndex++;
 		}
@@ -144,10 +155,12 @@ public class AttentionEventsController : MonoBehaviour {
 	}
 
 	public void CueReactivatedOnLeavingTargetArea(){
+        Debug.Log("Left target area");
 		numberOfCueReactivations = numberOfCueReactivations + 1;
 		// Debug.LogError("Cue reactivations: " + numberOfCueReactivations);
 		if(numberOfCueReactivations > 1){ // 2 reactivations in total, as the first one happens when the target first starts
-			ClearCue();
+            Debug.Log("Cue deactivated");
+            ClearCue();
 			currentCueTypeUntilCleared = "WAITING_FOR_NEXT_CLEAR"; // the cue was turned off by redirect numbers. We neeed to force the system not to take the next cue in the list, until it's cleared by a CLEAR line
 		}
 	}

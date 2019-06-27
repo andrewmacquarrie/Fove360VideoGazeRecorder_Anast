@@ -32,8 +32,7 @@ public class DataRecorder : MonoBehaviour {
     private TextWriter cueTypeStringWriter;
     private TextWriter cueLocationStringWriter;
 
-    public DeactivateWithinAngleToTarget arrowTargetChecker;
-    public DeactivateWithinAngleToTarget flickerTargetChecker;
+    public InsideTargetAreaIdentifier insideTargetAreaChecker;
 
     public AttentionEventsController eventManager;
 
@@ -94,7 +93,7 @@ public class DataRecorder : MonoBehaviour {
 
             string[] data = new string[]{ vp.time.ToString(), euler.x.ToString(), euler.y.ToString(), euler.z.ToString(), quaternion.x.ToString(), quaternion.y.ToString(), quaternion.z.ToString(), quaternion.w.ToString(),
                 leftRay.direction.x.ToString(), leftRay.direction.y.ToString(), leftRay.direction.z.ToString(), rightRay.direction.x.ToString(), rightRay.direction.y.ToString(), rightRay.direction.z.ToString(),
-                pixeluvLeft.x.ToString(), pixeluvLeft.y.ToString(), pixeluvRight.x.ToString(), pixeluvRight.y.ToString(), (arrowTargetChecker.InsideTargetArea() || flickerTargetChecker.InsideTargetArea()).ToString() };
+                pixeluvLeft.x.ToString(), pixeluvLeft.y.ToString(), pixeluvRight.x.ToString(), pixeluvRight.y.ToString(), insideTargetAreaChecker.InsideTargetArea().ToString() };
 
             orientationStringWriter.Write(string.Join(delimiter, data) + "\n");
         }
@@ -130,6 +129,7 @@ public class DataRecorder : MonoBehaviour {
     {
         RaycastHit hit;
         MeshCollider coll = videoSphere.GetComponent<MeshCollider>();
+        
         if (coll != null && coll.Raycast(r, out hit, Mathf.Infinity))
         {
             //Texture2D tex = videoSphere.GetComponent<MeshRenderer>().material.mainTexture as Texture2D;
@@ -143,7 +143,7 @@ public class DataRecorder : MonoBehaviour {
             float pixelY = pixelUV.y * height;
 
             //Debug.Log("Texture A size: " + width + ", " + height);
-            Debug.Log("Centre position in pano A: " + pixelX + ", " + pixelY);
+            //Debug.Log("Centre position in pano A: " + pixelX + ", " + pixelY);
 
             return new Vector2(pixelX, pixelY);
         }

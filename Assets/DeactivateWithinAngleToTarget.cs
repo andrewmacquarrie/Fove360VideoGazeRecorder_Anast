@@ -12,23 +12,23 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 	public GameObject target;
 	public AttentionEventsController attentionEventsController;
 
-	private bool cueIsActive = false;
+	private bool cueIsActive = true;
 
 	public GameObject deactivateBasedOnThisObjectsLocation;
 
 	private Vector2 targetSize;
 	private AttentionEvent e;
 
-	private bool firstRun;
-
+    private bool targetPreviouslyEntered;
+   
 	// Use this for initialization
 	void Start () {
-		firstRun = true;
+        targetPreviouslyEntered = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(e == null){
+        if (e == null){
 			// no targets happened yet
 			return;
 		}
@@ -57,60 +57,32 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 		var vectorToObjectDeactivationIsBasedOn = deactivateBasedOnThisObjectsLocation.transform.position;
 
 		if(cueIsActive && Vector3.Angle(vectorToObjectDeactivationIsBasedOn, vectorToTarget) < totalAllowableAngleForDeactivation){
-			cueIsActive = false;
-			// deactivation angle reached
-			if(objectToDeactivateArrow != null) {
+            targetPreviouslyEntered = true;
+            cueIsActive = false;
+            
+            Debug.Log("Entered target area");
+
+            // deactivation angle reached
+            if (objectToDeactivateArrow != null) {
 				objectToDeactivateArrow.ActivationStatusChangedByAngleToTarget(false);
 			} else {
 				objectToDeactivateFlicker.ActivationStatusChangedByAngleToTarget(false);
 			}
 		} else if (!cueIsActive && Vector3.Angle(vectorToObjectDeactivationIsBasedOn, vectorToTarget) > totalAllowableAngleForReactivation) {
-			cueIsActive = true;
+
+            Debug.Log("Deactivated cue based on angle");
+
+            cueIsActive = true;
 			if(objectToDeactivateArrow != null) {
 				objectToDeactivateArrow.ActivationStatusChangedByAngleToTarget(true);
 			} else {
 				objectToDeactivateFlicker.ActivationStatusChangedByAngleToTarget(true);
 			}
 
-			if(!firstRun){ // stop the first instance of arrow or flicker increasing this
+			if(targetPreviouslyEntered){ // stop the first instance of arrow or flicker increasing this
 				attentionEventsController.CueReactivatedOnLeavingTargetArea();
 			}
 		}
-
-		firstRun = false;
-	}
-
-	public bool InsideTargetArea(){
-		if(e == null){
-			// no targets happened yet
-			return false;
-		}
-
-		// get the pixel coords for the target and eye positions
-		var targetPixelCoords = AngleHelperMethods.PositionToPixelCoords(target.transform.position);
-		var eyePixelCoords = AngleHelperMethods.PositionToPixelCoords(eyeLocation.transform.position);
-
-		// calculate the pixel coord for the closest point in the target to the eye position
-		var closestPointOnTarget = AngleHelperMethods.GetClosestPointOnTarget(e, eyePixelCoords);
-
-		// calculate the long/lat for that pixel coord
-		var closestPointOnTargetLonLat = new Vector2(AngleHelperMethods.PixelCoordToLong(closestPointOnTarget.x), AngleHelperMethods.PixelCoordToLat(closestPointOnTarget.y));
-
-		// get long/lat as rays?
-		var vectorToClosestPointOnTarget = AngleHelperMethods.LonLatToPosition(closestPointOnTargetLonLat.x, closestPointOnTargetLonLat.y);
-
-		// show this on the screen as a ray
-		//Debug.DrawRay(new Vector3(0,0,0), vectorToClosestPointOnTarget, Color.green, 1f);
-
-		// claculate 3d angle between these, and add deactivationAngle to that - if less than this, deactivate object
-		var vectorToTarget = target.transform.position;
-		var angleTargetCentreToClosestTargetPoint = Vector3.Angle(vectorToTarget, vectorToClosestPointOnTarget);
-		var vectorToObjectDeactivationIsBasedOn = eyeLocation.transform.position; // unlike deactive, should consider "inside" based on eye location only
-
-		if(Vector3.Angle(vectorToObjectDeactivationIsBasedOn, vectorToTarget) < angleTargetCentreToClosestTargetPoint){
-			return true;
-		}
-		return false;
 	}
 
 	public void UpdateTargetSize(AttentionEvent ev){
@@ -120,5 +92,6 @@ public class DeactivateWithinAngleToTarget : MonoBehaviour {
 
 	public void Clear(){
 		e = null;
-	}
+        targetPreviouslyEntered = false;
+    }
 }

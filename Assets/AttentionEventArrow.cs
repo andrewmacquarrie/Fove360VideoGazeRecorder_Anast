@@ -30,6 +30,7 @@ public class AttentionEventArrow : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		hidden = true;
+        Clear();
 		following = false;
 		rotateToFaceTarget = GetComponent<RotateToFaceTarget>();
 	}

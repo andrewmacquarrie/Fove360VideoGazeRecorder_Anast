@@ -1,4 +1,7 @@
 
-  {"events": [{"startTime": 0,"targetHorPixel":1918.5,"targetVerPixel":1012, "height": 168, "width": 109, "type": ""}
+  {"events": [{"startTime": 0,"targetHorPixel":1918.5,"targetVerPixel":1012, "height": 168, "width": 109, "type": ""},
+{"startTime": 10,"targetHorPixel":0,"targetVerPixel":0, "height": 1, "width": 1, "type": "CLEAR"},
+{"startTime": 15,"targetHorPixel":1918.5,"targetVerPixel":1012, "height": 168, "width": 109, "type": ""},
+{"startTime": 25,"targetHorPixel":0,"targetVerPixel":0, "height": 1, "width": 1, "type": "CLEAR"}
   ]}
   
