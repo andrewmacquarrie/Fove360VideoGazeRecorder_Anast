@@ -15,7 +15,7 @@ public class ApplyLongLat : MonoBehaviour {
 	}
 
 	public void ApplyLongLatToPosition(float longitude, float latitude){
-		Debug.Log("Applying target position");
+		// Debug.Log("Applying target position");
 		transform.position = AngleHelperMethods.LonLatToPosition(longitude, latitude);
 	}
 }
