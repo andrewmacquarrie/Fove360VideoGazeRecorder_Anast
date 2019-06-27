@@ -25,7 +25,8 @@ public class DrawTargetRect : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(!showTargetRect){
+		if(!showTargetRect || nodePositions[0].x == -10)
+        {
 			return;
 		}
 		updatePolygon();
