@@ -39,8 +39,8 @@ public class EyeGazePlayback : MonoBehaviour
         text = reader.ReadLine(); // skip first line
         lastData = new string[] { "-1.0" };
 
-        // eventController.SetEventTypesForDebug(getCueTypes());
-        eventController.SetEventTypesForDebug(new List<string>(new string[] { "FLICKER", "FLICKER", "FLICKER", "FLICKER", "FLICKER", "FLICKER" }));
+        eventController.SetEventTypesForDebug(getCueTypes());
+        //eventController.SetEventTypesForDebug(new List<string>(new string[] { "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW" }));
     }
 
     private List<string> getCueTypes()

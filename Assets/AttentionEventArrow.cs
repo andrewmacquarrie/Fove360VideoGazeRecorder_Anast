@@ -33,7 +33,9 @@ public class AttentionEventArrow : MonoBehaviour {
         Clear();
 		following = false;
 		rotateToFaceTarget = GetComponent<RotateToFaceTarget>();
-	}
+        angleToTargetSaysIShouldBeActive = true; // debug: added
+
+    }
 
 	// Update is called once per frame
 	void Update () {

@@ -57,7 +57,7 @@ public class AttentionEventsController : MonoBehaviour {
 		if(eventsFile.name.Contains("Intro")){
 			// Debug.LogError("Even event split");
 			attentionEventTypes = new List<string> { "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "FLICKER", "FLICKER", "FLICKER" };
-		} else if(fourArrowCues){
+        } else if(fourArrowCues){
 			// Debug.LogError("Four arrows cues");
 			attentionEventTypes = new List<string> { "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "ARROW_FOLLOW", "FLICKER", "FLICKER", "FLICKER" };
 		} else {
